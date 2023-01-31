@@ -1,0 +1,43 @@
+/*-------- Button --------*/
+
+.button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+margin-left: 10px;
+  height: 52px;
+  padding: 0 100px;
+
+  border: none;
+  background: linear-gradient(180deg, #dfb70b 0%, #dfb70b 100%);
+  border-radius: 12px;
+  box-shadow: none;
+
+  // font-family: 'Lato';
+  font-weight: bold;
+  font-size: 16px;
+  line-height: 1;
+  color: #fff;
+  
+
+  &:hover {
+    background: linear-gradient(180deg, #eccc3b 0%, #eccc3b 100%);
+  }
+}
+
+.button {
+  &--v1 {
+    font-size: 18px;
+    text-transform: capitalize;
+  }
+}
+
+@media (max-width: 767px) {
+  .button {
+    &--v1 {
+      font-size: 16px;
+      height: 45px;
+      padding: 0 15px;
+    }
+  }
+}

@@ -1,0 +1,204 @@
+/*-------- Lotto --------*/
+
+.lotto {
+  width: 100%;
+
+  background: rgba(27, 11, 41, 0.2);
+  padding: 10px 15px;
+  backdrop-filter: blur(10px);
+  border-radius: 5px;
+  // font-family: "Lato";
+  font-family: var(--bs-body-font-family);
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 56px;
+    border-bottom: 1px #7f02ba solid;
+    background-color: #301d3b;
+    border-radius: 5px;
+  }
+
+  &__title {
+    margin: 0;
+    font-family: var(--bs-body-font-family);
+    // font-size: var(--bs-body-font-size);
+    // font-weight: var(--bs-body-font-weight);
+    font-weight: bold;
+    line-height: var(--bs-body-line-height);
+    margin-bottom: 0;
+    font-size: 24px;
+    // font-weight: 500;
+    // font-weight: var(--bs-body-line-height);
+    color: #fff;
+    text-align: center;
+  }
+
+  &__cost {
+    font-family: var(--bs-body-font-family);
+    // font-size: var(--bs-body-font-size);
+    // font-weight: var(--bs-body-font-weight);
+    line-height: var(--bs-body-line-height);
+    font-weight: bold;
+    font-size: 24px;
+    // font-weight: 700;
+    // font-size: 26px;
+    color: #fff;
+    text-align: center;
+  }
+
+  &__cost span:nth-child(2) {
+    color: #e8a1ff;
+  }
+
+  &__cost span:nth-child(3) {
+    color: #f8a863;
+  }
+
+  &__body {
+    padding: 16px 5px 24px 5px;
+  }
+
+  &__background {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+  }
+
+  .lotto__columns {
+    display: flex;
+    margin-top: 16px;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+
+  &__column {
+    width: 50%;
+    padding: 12px 20px 16px 20px;
+  }
+
+  &__column:nth-child(2) {
+    border-left: 1px solid rgba(166, 174, 201, 0.3);
+  }
+
+  &__row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    font-size: 16px;
+    color: #a7afca;
+  }
+
+  &__column strong {
+    font-weight: 600;
+    color: #fff;
+  }
+
+  &__error {
+    margin-top: 12px;
+    margin-bottom: 0;
+
+    font-size: 18px;
+    text-align: center;
+    color: #f42a2a;
+  }
+
+  &__button {
+    width: 100%;
+    max-width: 228px;
+    padding: 10px 13px 13px 20px;
+    // padding: 0 20px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 12px;
+
+    background: linear-gradient(180deg, #dfb70b 0%, #dfb70b 100%);
+    border-radius: 12px;
+  }
+
+  &__info {
+    padding: 20px 24px 34px 24px;
+    margin-top: 16px;
+  }
+
+  &__list {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    margin-top: 20px;
+    margin-bottom: -15px;
+
+    list-style-type: none;
+    padding-left: 0;
+  }
+
+  &__item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    width: calc(50% - 10px);
+    padding-bottom: 8px;
+    margin-bottom: 15px;
+
+    border-bottom: 1px solid rgba(167, 175, 202, 0.3);
+
+    font-size: 16px;
+  }
+
+  &__item span:nth-child(1) {
+    color: #a7afca;
+  }
+
+  &__item span:nth-child(2) {
+    font-family: 700;
+    color: #fff;
+  }
+}
+
+@media (max-width: 1399px) {
+  .lotto {
+    &__row {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+  }
+}
+
+@media (max-width: 1219px) {
+  .lotto {
+    &__item {
+      width: 100%;
+    }
+
+    &__cost {
+      font-size: 22px;
+    }
+  }
+}
+
+@media (max-width: 989px) {
+  .lotto {
+    &__body {
+      padding: 15px;
+    }
+  }
+}
+
+@media (max-width: 479px) {
+  .lotto {
+    &__columns {
+      flex-direction: column;
+    }
+
+    &__column:nth-child(2) {
+      border-top: 1px solid rgba(166, 174, 201, 0.3);
+      border-left: none;
+    }
+
+    &__column {
+      width: 100%;
+    }
+  }
+}

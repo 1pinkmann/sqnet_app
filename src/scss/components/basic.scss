@@ -1,0 +1,32 @@
+/*-------- Basic --------*/
+
+.scrollwrapper {
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: 100%;
+    padding-right: 6px;
+
+    &::-webkit-scrollbar {
+        width: 5px;
+        height: 5px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background-color: transparent;
+        border-radius: 4px;
+    }
+
+    &:hover::-webkit-scrollbar-thumb {
+        background-color: darkgrey;
+    }
+}
+
+@media (hover: none) and (pointer: coarse) {
+    .scrollwrapper {
+        padding-right: 0 !important;
+
+        &::-webkit-scrollbar {
+            width: 0px;
+        }
+    }
+}

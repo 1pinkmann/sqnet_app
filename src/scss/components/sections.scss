@@ -1,0 +1,24 @@
+/*-------- Sections --------*/
+
+.sections {
+    display: flex;
+    justify-content: space-between;
+
+    &__item {
+        width: 27%;
+    }
+
+    &__item:nth-child(2) {
+        width: 41%;
+    }
+}
+
+@media (max-width: 989px) {
+
+    .sections {
+
+        &__item:nth-child(n) {
+            width: 100%;
+        }
+    }
+}
