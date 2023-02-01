@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import Arrow from '../../Icons/Arrow';
+import Arrow from './../../Icons/Arrow';
 import { checkForScrollbar } from "../../services/scrollbarService";
 
 export default function Select({ className, list, setList }) {

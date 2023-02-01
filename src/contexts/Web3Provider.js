@@ -1,6 +1,6 @@
 import { createContext, useCallback, useEffect, useState } from "react"
 import Web3 from "web3";
-import isMetamaskInstalled from '../services/contract/isMetamaskInstalled';
+import isMetamaskInstalled from './../services/contract/isMetamaskInstalled';
 import { walletConnectProvider } from './../services/connectors';
 import { isTestnet } from './../constants';
 

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import RoundedButton from "./RoundedButton";
-import close from '../assets/images/close.svg'
+import close from './../assets/images/close.svg'
 
 export default function RewardsCurrItem({ logo, chosenOption, text, percent, onChange, options }) {
 

@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import sqnetAbi from '../blockchain/artifacts/contracts/SQNET.sol/SQNET.json';
+import sqnetAbi from './../blockchain/artifacts/contracts/SQNET.sol/SQNET.json';
 import { Web3Context } from './Web3Provider';
 import { isTestnet, SQNET_TESTNET } from './../constants';
 

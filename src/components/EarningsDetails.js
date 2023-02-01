@@ -1,6 +1,6 @@
 import React from "react";
 
-import sendMoney from '../assets/images/send-money.svg'
+import sendMoney from './../assets/images/send-money.svg'
 
 const EarningsDetails = ({ availableRewards }) => {
   return (
