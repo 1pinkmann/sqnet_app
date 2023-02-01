@@ -142,7 +142,7 @@ const testnetOptions = [
 
 const tokens = isTestnet ? testnetOptions : options;
 
-const LeftContent = ({ userClaimRewards, withdrawalEnabled }) => {
+const LeftContent = ({ userClaimRewards, withdrawalEnabled, availableRewards }) => {
   const [currency1, setCurrency1] = useState(tokens[0].address);
   const [currency2, setCurrency2] = useState(tokens[1].address);
 
@@ -176,7 +176,7 @@ const LeftContent = ({ userClaimRewards, withdrawalEnabled }) => {
             <div className="flex-center">
               <div className="payoutinfo2">
                 <div style={{ marginBottom: "32px" }}>
-                  <EarningsDetails />
+                  <EarningsDetails availableRewards={availableRewards} />
                 </div>
                 <div className="flex" style={{ marginBottom: "32px" }}>
                   <div className="flex w-100">
@@ -221,7 +221,11 @@ const LeftContent = ({ userClaimRewards, withdrawalEnabled }) => {
                 </div>
                 <div className="flex gap-2">
                   <div className="flex w-100">
-                    <RoundedButton className={"danger w-100"} onClick={() => userClaimRewards(currency1, currency2)} disabled={!withdrawalEnabled}>
+                    <RoundedButton
+                      className={"danger w-100"}
+                      onClick={() => userClaimRewards(currency1, currency2)}
+                      style={{ opacity: !withdrawalEnabled ? 0.5 : null }}
+                    >
                       Claim Savings
                     </RoundedButton>
                   </div>

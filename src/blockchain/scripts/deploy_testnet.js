@@ -72,7 +72,7 @@ async function main() {
 
   const deploySqnet = async () => {
     const SQNET = await ethers.getContractFactory("SQNET");
-    sqnet = await SQNET.deploy(router.address, sqt.address);
+    sqnet = await SQNET.deploy(router.address, sqt.address, usdt.address);
     await sqnet.deployed();
 
     await sqt.setSqnetAddress(sqnet.address);
@@ -103,37 +103,44 @@ async function main() {
 
     await sqt.approve(router.address, amountToAdd);
 
-    await router.addLiquidity(
+    await router.addLiquidityETH(
       sqt.address,
-      usdt.address,
       amountToAdd,
-      amountToAdd,
-      amountToAdd,
-      amountToAdd,
+      0,
+      ethers.utils.parseEther("0.05"),
       owner,
-      Math.round((Date.now() + 86400 * 2) / 1000)
+      Math.round((Date.now() + 86400 * 2) / 1000),
+      { value: ethers.utils.parseEther("0.1") }
     );
 
-    await router.addLiquidity(
+    await router.addLiquidityETH(
       usdt.address,
-      dao.address,
       amountToAdd,
-      amountToAdd,
-      amountToAdd,
-      amountToAdd,
+      0,
+      ethers.utils.parseEther("0.05"),
       owner,
-      Math.round((Date.now() + 86400 * 2) / 1000)
+      Math.round((Date.now() + 86400 * 2) / 1000),
+      { value: ethers.utils.parseEther("0.1") }
     );
 
-    await router.addLiquidity(
-      usdt.address,
+    await router.addLiquidityETH(
       usdc.address,
       amountToAdd,
-      amountToAdd,
-      amountToAdd,
-      amountToAdd,
+      0,
+      ethers.utils.parseEther("0.05"),
       owner,
-      Math.round((Date.now() + 86400 * 2) / 1000)
+      Math.round((Date.now() + 86400 * 2) / 1000),
+      { value: ethers.utils.parseEther("0.1") }
+    );
+
+    await router.addLiquidityETH(
+      dao.address,
+      amountToAdd,
+      0,
+      ethers.utils.parseEther("0.05"),
+      owner,
+      Math.round((Date.now() + 86400 * 2) / 1000),
+      { value: ethers.utils.parseEther("0.1") }
     );
   }
 
@@ -141,14 +148,14 @@ async function main() {
   await getPancakeRouter();
   await createPair();
   await deploySqnet();
-  // await mintBalance();
-  // await addInitialLiquidities();
-
   console.log('USDT ADDRESS', usdt.address);
   console.log('SQT ADDRESS', sqt.address);
   console.log('DAO ADDRESS', dao.address);
   console.log('USDC ADDRESS', usdc.address);
   console.log('SQNET ADDRESS', sqnet.address);
+  // await mintBalance();
+  // await addInitialLiquidities();
+
   // console.log('SQT/USDT PAIR ADDRESS', pair.address);
 }
 

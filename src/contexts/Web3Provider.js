@@ -11,11 +11,12 @@ function Web3Provider({ children }) {
   const [accounts, setAccounts] = useState([]);
   const [activeWallet, setActiveWallet] = useState("");
 
-  let handleDiconnect = () => {
+  let handleDiconnect = (callback) => {
     localStorage.removeItem("user");
     setActiveWallet("");
     setAccounts([]);
     setWeb3(null);
+    if (callback) callback();
   }
 
   const initWeb3 = useCallback(async (type) => {

@@ -2,7 +2,7 @@ import React from "react";
 
 import sendMoney from '../assets/images/send-money.svg'
 
-const EarningsDetails = () => {
+const EarningsDetails = ({ availableRewards }) => {
   return (
     <div className="earning-details-container">
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -12,7 +12,7 @@ const EarningsDetails = () => {
 
         <div className="text-start">
           <div className="earnings-amount">
-            0 BNB
+            {availableRewards} USDT
           </div>
 
         </div>

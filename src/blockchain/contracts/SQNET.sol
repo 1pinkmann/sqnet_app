@@ -11,17 +11,19 @@ contract SQNET {
 	address private sqtAddress;
 	address private owner;
 	address private weth;
+	address private usdtAddress;
 
 	mapping(address => uint) public lastClaims;
 
 	constructor(
 		address _routerAddress,
 		address _sqtAddress,
-		address _weth
+		address _usdtAddress
 	) public {
 		routerAddress = _routerAddress;
 		sqtAddress = _sqtAddress;
 		weth = IUniswapV2Router02(routerAddress).WETH();
+		usdtAddress = _usdtAddress;
 		owner = msg.sender;
 	}
 
@@ -58,6 +60,29 @@ contract SQNET {
 
 		liquidityAmountSqt = amount * sqt.getLiquidityTax() / 100;
 		marketingAmountSqt = amount - liquidityAmountSqt;
+	}
+
+	function countSqtReward(address user) public returns(uint userReward) {
+		ISQT sqt = ISQT(sqtAddress);
+		uint rewardSqtBalance = sqt.balanceOf(sqt.rewardWallet());
+		uint rewardPercentage = (sqt.balanceOf(user) * 100 * 1e18 / sqt.totalSupply());
+		userReward = rewardSqtBalance * rewardPercentage / 100 / 1e18;
+		require(userReward > 0, 'Not enough SQT rewards');
+	}
+
+	function getAvailableUsdtRewards(uint sqtIn) external view returns(uint) {
+		address[] memory path0 = new address[](2);
+		path0[0] = sqtAddress;
+		path0[1] = weth;
+
+		address[] memory path1 = new address[](2);
+		path1[0] = weth;
+		path1[1] = usdtAddress;
+
+		uint[] memory ethOut = IUniswapV2Router02(routerAddress).getAmountsOut(sqtIn, path0);
+		uint[] memory usdtOut = IUniswapV2Router02(routerAddress).getAmountsOut(ethOut[1], path1);
+
+		return usdtOut[1];
 	}
 
 	function swapMarketingTaxesForETH() public {
@@ -140,16 +165,11 @@ contract SQNET {
 		uint userBalance = sqt.balanceOf(msg.sender);
 
 		require(userBalance > 0, 'No SQT balance');
-
-		uint totalSupply = sqt.totalSupply();
 		uint rewardSqtBalance = sqt.balanceOf(sqt.rewardWallet());
 
 		if (rewardSqtBalance > 0) {
-			uint rewardPercentage = (userBalance * 100 * 1e18 / totalSupply);
-			uint userReward = rewardSqtBalance * rewardPercentage / 100 / 1e18;
-
+			uint userReward = countSqtReward(msg.sender);
 			uint amountOut = swapRewardTaxesForETH(userReward);
-	
 			uint amountToConvert = amountOut / 2;
 
 			address[] memory path0 = new address[](2);

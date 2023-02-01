@@ -82,7 +82,7 @@ describe("SQNET", function () {
 
   deploySqnet = async () => {
     const SQNET = await ethers.getContractFactory("SQNET");
-    sqnet = await SQNET.deploy(router.address, sqt.address, weth.address);
+    sqnet = await SQNET.deploy(router.address, sqt.address, usdt.address);
     await sqnet.deployed();
 
     sqt.setSqnetAddress(sqnet.address);
@@ -226,6 +226,8 @@ describe("SQNET", function () {
         { value: ethers.utils.parseEther("1.0") }
       );
     });
+    const userReward = await getSqtReward();
+    const rewards = await sqnet.connect(buyer).getAvailableUsdtRewards(userReward.toFixed(0));
 
     if (logs) {
       consoleGroup('BUY SQT', () => {
@@ -281,14 +283,18 @@ describe("SQNET", function () {
     expect(sqtBalanceAfter).to.equal(sqtBalanceBefore.minus(getBn(ONE_TOKEN)));
   }
 
-  async function convertTaxIntoEth() {
+  async function getSqtReward() {
     const userSqtBalance = getBn(await sqt.balanceOf(buyer.address));
     const totalSupply = getBn(await sqt.totalSupply());
     const rewardBalanceSqtBefore = getBn(await sqt.balanceOf(rewardWallet.address));
 
     const rewardPercentage = userSqtBalance.multipliedBy(getBn(100 * (10 ** 18))).dividedBy(totalSupply);
     const userReward = rewardBalanceSqtBefore.multipliedBy(rewardPercentage).dividedBy(getBn(100)).dividedBy(getBn(10 ** 18));
+    return userReward;
+  }
 
+  async function convertTaxIntoEth() {
+    const userReward = await getSqtReward();
     const amountsOut = await router.getAmountsOut(userReward.toFixed(0), [sqt.address, weth.address]);
     return amountsOut[1];
   }
@@ -332,10 +338,10 @@ describe("SQNET", function () {
   //   expect(sqtBalanceAfter).to.equal(sqtBalanceBefore.plus(oneTokenBn.minus(oneTokenBn.multipliedBy(getBn(OVERALL_TAX)))));
   // }
 
-  // it("Buy/Sell exact SQT for ETH", async () => {
-  //   await buyExactSqt();
-  //   await sellExactSqt();
-  // });
+  it("Buy/Sell exact SQT for ETH", async () => {
+    await buyExactSqt();
+    await sellExactSqt();
+  });
 
   // // it("Buy SQT for exact ETH", async () => {
   // //   await buySqtForExactEth();
