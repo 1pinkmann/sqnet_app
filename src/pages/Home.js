@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
+import { inject, observer } from 'mobx-react';
 
 import Header from "../components/Header";
 import Rewards from "../components/Rewards";
@@ -170,4 +171,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default inject(stores => ({ contractStore: stores.contractStore, web3Store: stores.web3Store }))(observer(Home));
