@@ -33,9 +33,7 @@ class HomeController extends Component {
     $p.contractsStore.setSqtContract($p.web3Store.web3);
 
     await this.viewModel.fetchBalance();
-    if (this.viewModel.balance > 0) {
-      await this.viewModel.fetchAvailableRewards();
-    }
+    await this.viewModel.fetchAvailableRewards();
     await this.viewModel.fetchLastClaim();
 
     this.viewModel.setWithdrawalEnabled(this.lastClaimBlockPassed() && this.viewModel.balance > 0 && this.viewModel.availableRewards > 0);
