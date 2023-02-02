@@ -48,7 +48,7 @@ const Header = ({ accounts, setModalVisible, balance, disconnect }) => {
                           <>
                             <div className="text-gray">Your SQT Balance</div>
                             <div className="text-primary sub-header">
-                              {Number(parseFloat(balance / 10 ** 18).toFixed(5))}
+                              {balance}
                             </div>
                           </>
                         ) : (

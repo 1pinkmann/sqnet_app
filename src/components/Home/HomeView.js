@@ -24,7 +24,7 @@ function HomeView ({ web3Store, connect, disconnect, claimRewards, viewModel }) 
         setModalVisible={viewModel.setModalVisible}
         balance={viewModel.balance}
       />
-      <Rewards withdrawalEnabled={viewModel.withdrawalEnabled} userClaimRewards={claimRewards} availableRewards={viewModel.availableRewards} />
+      <Rewards userClaimRewards={claimRewards} viewModel={viewModel} />
       <Modal
         size="sm"
         show={viewModel.modalVisible}

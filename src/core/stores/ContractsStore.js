@@ -45,7 +45,14 @@ export default class ContractsStore extends Web3Store {
 
   fetchAvailableRewards = async (address) => {
     const sqtRewards = await this.getSqtReward(address);
-    const usdtRewards = await this.SqnetContract.methods.getAvailableUsdtRewards(sqtRewards.toFixed(0)).call({ from: address });
+    let usdtRewards;
+
+    if (sqtRewards >= 1) {
+      usdtRewards = await this.SqnetContract.methods.getAvailableUsdtRewards(sqtRewards.toFixed(0)).call({ from: address });
+    } else {
+      usdtRewards = 0;
+    }
+
     return usdtRewards / 10 ** 18;
   }
 

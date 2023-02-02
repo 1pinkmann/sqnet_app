@@ -20,7 +20,6 @@ export default class Web3Store {
         this.setWeb3(new Web3(window.ethereum));
         let address = await window.ethereum.request({ method: "eth_requestAccounts" });
         this.setAccounts(address);
-        this.accounts = address;
         localStorage.setItem("user", JSON.stringify({ wallet: "metamask", address }));
         this.setActiveWallet("metamask");
 

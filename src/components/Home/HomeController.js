@@ -27,14 +27,14 @@ class HomeController extends Component {
 
     await this.viewModel.fetchBalance();
     if (this.viewModel.balance > 0) {
-      this.viewModel.fetchAvailableRewards();
+      await this.viewModel.fetchAvailableRewards();
     }
     await this.viewModel.fetchLastClaim();
 
-    this.viewModel.setWithdrawalEnabled(((Date.now() - (this.viewModel.lastClaim * 1000)) / 60000 > 3) && Number(this.viewModel.balance) > 0);
+    this.viewModel.setWithdrawalEnabled(this.lastClaimBlockPassed() && this.viewModel.balance > 0 && this.viewModel.availableRewards > 0);
 
     this.timer = setInterval(() => {
-      if (this.lastClaimBlockPassed() && this.viewModel.lastClaim > 0) {
+      if (this.lastClaimBlockPassed() && this.viewModel.balance > 0 && this.viewModel.availableRewards > 0) {
         this.viewModel.setWithdrawalEnabled(true);
         clearInterval(this.timer);
       }
@@ -78,10 +78,6 @@ class HomeController extends Component {
     window.location.reload();
   }
 
-  handleCountComplete = () => {
-    this.viewModel.setCountdownActive(false);
-  }
-
   hoursLeft = ({ minutes }) => <span>{minutes}</span>;
 
   claimRewards = async (token0, token1) => {
@@ -89,10 +85,13 @@ class HomeController extends Component {
       this.viewModel.claimRewards(token0, token1);
     } else {
       const timeLeft = 3 - ((Date.now() - this.viewModel.lastClaim * 1000) / 60000);
+
       toast(  
         <span>
           {Number(this.viewModel.balance) === 0 ? 
             'No SQT balance available' : 
+            Number(this.viewModel.availableRewards) === 0 ?
+            'No rewards avaialble' : 
             <>
               You can only claim once per 3 mins
               ({Math.ceil(timeLeft)} left)

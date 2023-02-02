@@ -34,7 +34,6 @@ contract SQNET {
     _;
   }
 
-
 	function getLastClaim(address _address) public view returns(uint) {
 		return lastClaims[_address];
 	}

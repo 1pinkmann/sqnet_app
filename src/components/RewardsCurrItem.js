@@ -4,39 +4,18 @@ import close from './../assets/images/close.svg'
 
 export default function RewardsCurrItem({ logo, chosenOption, text, percent, onChange, options }) {
 
-    const [isOpen, setIsOpen] = useState(false)
-    const [search, setSearch] = useState("")
-    const [results, setResults] = useState([])
-    const [showResults, setShowResults] = useState(true)
+    const [isOpen, setIsOpen] = useState(false);
+    const [results, setResults] = useState([]);
 
     useEffect(() => {
-
-        if (search.length > 0) {
-            setResults(options.filter((option) => {
-                return option.currency.toLowerCase().includes(search.toLowerCase())
-            }))
-            setShowResults(true)
-            setIsOpen(true)
-        } else {
-            setResults(options)
-        }
-        return () => {
-            setIsOpen(false)
-            setShowResults(false)
-        }
-
-    }, [search, options])
+        setResults(options);
+    }, [options])
 
 
     return <div className="rewards-curr-item">
         <div className="" style={{ position: 'relative' }} >
             <RoundedButton style={{ minWidth: '170px', maxWidth: '170px' }} isDropdown={true} onClick={() => {
-                setIsOpen((v) => {
-                    if (!v) {
-                        setShowResults(true)
-                    }
-                    return !v
-                })
+                setIsOpen((v) => !v)
             }}>
                 <img src={logo} width={24} height={24} alt="Logo" />
                 {text}
@@ -56,11 +35,10 @@ export default function RewardsCurrItem({ logo, chosenOption, text, percent, onC
                             {results.map((result, id) => {
                                 return <li key={`li-result-${id}`} onClick={(e) => {
                                     e.preventDefault()
-                                    setShowResults(false)
                                     setIsOpen(false)
                                     onChange(result.address)
                                 }}>
-                                    {result['logo'] && <img src={result['logo']} width={24} height={24} style={{ marginRight: '24px' }} />}
+                                    {result['logo'] && <img alt="" src={result['logo']} width={24} height={24} style={{ marginRight: '24px' }} />}
                                     <span>
                                         {result.currency}
                                     </span>
