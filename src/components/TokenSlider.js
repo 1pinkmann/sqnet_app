@@ -1,11 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
 import Select, { components } from "react-select";
 import { RiDeleteBin6Line } from "react-icons/ri";
-import { Form } from "react-bootstrap";
 import OutsideClickHandler from "react-outside-click-handler";
 import { FiSearch } from "react-icons/fi";
 import ReactSlider from "react-slider";
-import Slider from "react-rangeslider";
 
 const TokenSlider = (props) => {
   const ValueContainer = ({ children, ...subProps }) => {
@@ -28,6 +26,7 @@ const TokenSlider = (props) => {
                 marginRight: 2,
                 marginLeft: 2,
               }}
+              alt=""
             />
           </span>
           <span style={{ display: "flex" }}>{children}</span>
@@ -61,7 +60,7 @@ const TokenSlider = (props) => {
               lineHeight: 0,
             }}
           >
-            <img src={image} style={{ maxWidth: "14px", maxHeight: "100%" }} />
+            <img src={image} style={{ maxWidth: "14px", maxHeight: "100%" }} alt="" />
           </div>
           <div
             style={{
@@ -187,8 +186,7 @@ const TokenSlider = (props) => {
       color: "#fff",
       fontWeight: 700,
       boxShadow: "none",
-      backgroundColor: state.isFocused ? "blue" : "",
-      fontWeight: 700,
+      backgroundColor: state.isFocused ? "blue" : ""
     }),
     dropdownIndicator: (provided, state) => ({
       ...provided,

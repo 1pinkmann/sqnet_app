@@ -7,7 +7,7 @@ import { Navbar } from "react-bootstrap";
 // import logo from "../assets/images/appLogo.svg";
 import Logo from "./Logo";
 
-const Header = ({ accounts, setSmShow, balance, disconnect }) => {
+const Header = ({ accounts, setModalVisible, balance, disconnect }) => {
 
   return (
     <div className="header " style={{ zIndex: 999 }}>
@@ -86,7 +86,7 @@ const Header = ({ accounts, setSmShow, balance, disconnect }) => {
                       }}
                       className="btn-light-rounded"
                       variant="light"
-                      onClick={() => setSmShow(true)}
+                      onClick={() => setModalVisible(true)}
                     >
                       Connect Wallet
                     </button>

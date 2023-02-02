@@ -3,11 +3,16 @@ import Web3 from 'web3';
 import isMetamaskInstalled from './../../services/contract/isMetamaskInstalled';
 import { walletConnectProvider } from './../../services/connectors';
 import { isTestnet } from '../../constants';
+import { makeObservable } from 'mobx';
 
 export default class Web3Store {
   @observable web3;
   @observable accounts = [];
   @observable activeWallet = '';
+
+  constructor () {
+    makeObservable(this);
+  }
 
   initWeb3 = async (type) => {
     if (isMetamaskInstalled() && type === "metamask" && window.ethereum) {
@@ -15,6 +20,7 @@ export default class Web3Store {
         this.setWeb3(new Web3(window.ethereum));
         let address = await window.ethereum.request({ method: "eth_requestAccounts" });
         this.setAccounts(address);
+        this.accounts = address;
         localStorage.setItem("user", JSON.stringify({ wallet: "metamask", address }));
         this.setActiveWallet("metamask");
 
@@ -36,16 +42,12 @@ export default class Web3Store {
       if (!walletConnectProvider) return;
       this.setWeb3(new Web3(walletConnectProvider));
       try {
-        walletConnectProvider.enable().then(address => {
-          this.setAccounts(address);
-          localStorage.setItem("user", JSON.stringify({ wallet: "universal", address }));
-          this.setActiveWallet("universal");
-        }).catch(() => {
-          console.log("user closed modal");
-        });
-
+        const address = await walletConnectProvider.enable();
+        this.setAccounts(address);
+        localStorage.setItem("user", JSON.stringify({ wallet: "universal", address }));
+        this.setActiveWallet("universal");
         walletConnectProvider.on("accountsChanged", (accounts) => {
-          console.log("accounts changed");
+          this.setAccounts(accounts);
         });
         walletConnectProvider.on("disconnect", this.handleDiconnect);
       } catch (err) {
@@ -91,15 +93,15 @@ export default class Web3Store {
     if (callback) callback();
   }
 
-  @action setWeb3 (web3) {
+  @action setWeb3 = (web3) => {
     this.web3 = web3;
   }
 
-  @action setAccounts (value) {
+  @action setAccounts = (value) => {
     this.accounts = value;
   }
 
-  @action setActiveWallet (wallet) {
+  @action setActiveWallet = (wallet) => {
     this.activeWallet = wallet;
   }
 }
