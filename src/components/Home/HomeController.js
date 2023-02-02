@@ -11,8 +11,15 @@ class HomeController extends Component {
   viewModel = new HomeViewModel(this.props.contractsStore, this.props.web3Store);
   timer;
 
-  lastClaimBlockPassed() {
+  lastClaimBlockPassed = () => {
     return (Date.now() - (this.viewModel.lastClaim * 1000)) / 60000 > 3;
+  }
+
+  handleDisconnect = () => {
+    this.props.web3Store.handleDisconnect(() => {
+      this.viewModel.setAvailableRewards(0);
+      this.viewModel.setWithdrawalEnabled(false);
+    });
   }
 
   init = async () => {
@@ -39,6 +46,12 @@ class HomeController extends Component {
         clearInterval(this.timer);
       }
     }, 10000);
+
+    if ($p.web3Store.web3) {
+      $p.web3Store.web3._provider.on('accountsChanged', () => {
+        this.init();
+      });
+    }
   }
 
   async componentDidMount () {
@@ -52,12 +65,6 @@ class HomeController extends Component {
     }
 
     this.init();
-
-    if ($p.web3Store.web3) {
-      $p.web3Store.web3._provider.on('accountsChanged', () => {
-        this.init();
-      });
-    }
   }
 
   componentWillUnmount () {
@@ -104,7 +111,7 @@ class HomeController extends Component {
 
   render () {
     return (
-      <HomeView viewModel={this.viewModel} connect={this.connect} disconnect={this.disconnect} claimRewards={this.claimRewards} />
+      <HomeView viewModel={this.viewModel} connect={this.connect} disconnect={this.disconnect} claimRewards={this.claimRewards} handleDisconnect={this.handleDisconnect} />
     )
   }
 }

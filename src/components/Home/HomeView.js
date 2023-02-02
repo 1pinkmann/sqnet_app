@@ -6,8 +6,8 @@ import Rewards from "../Rewards";
 import { Modal } from "react-bootstrap";
 import close from "../../assets/images/close.svg";
 
-function HomeView ({ web3Store, connect, disconnect, claimRewards, viewModel }) {
-  const { accounts, activeWallet, handleDiconnect } = web3Store;
+function HomeView ({ web3Store, connect, disconnect, claimRewards, viewModel, handleDisconnect }) {
+  const { accounts, activeWallet } = web3Store;
 
   useEffect(() => {
     window.scrollTo({
@@ -20,7 +20,7 @@ function HomeView ({ web3Store, connect, disconnect, claimRewards, viewModel }) 
     <div className="container-fluid app-container">
       <Header
         accounts={accounts}
-        disconnect={activeWallet === 'universal' ? () => disconnect() : () => handleDiconnect(() => viewModel.setAvailableRewards(0))}
+        disconnect={activeWallet === 'universal' ? () => disconnect() : handleDisconnect}
         setModalVisible={viewModel.setModalVisible}
         balance={viewModel.balance}
       />

@@ -48,7 +48,7 @@ export default class Web3Store {
         walletConnectProvider.on("accountsChanged", (accounts) => {
           this.setAccounts(accounts);
         });
-        walletConnectProvider.on("disconnect", this.handleDiconnect);
+        walletConnectProvider.on("disconnect", this.handleDisconnect);
       } catch (err) {
         console.log(err);
       }
@@ -84,7 +84,7 @@ export default class Web3Store {
     }
   }
 
-  @action handleDiconnect = (callback) => {
+  @action handleDisconnect = (callback) => {
     localStorage.removeItem("user");
     this.setActiveWallet("");
     this.setAccounts([]);
