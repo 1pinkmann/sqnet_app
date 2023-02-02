@@ -50,6 +50,7 @@
     "jest-resolve": "26.6.0",
     "jest-watch-typeahead": "0.6.1",
     "mini-css-extract-plugin": "0.11.3",
+    "mobx": "^6.7.0",
     "mobx-react": "^7.6.0",
     "moralis": "^0.0.128",
     "node-sass": "^6.0.1",
