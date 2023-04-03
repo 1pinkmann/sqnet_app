@@ -17,8 +17,12 @@ module.exports = {
   },
   networks: {
     goerli: {
-      url: 'https://eth-goerli.g.alchemy.com/v2/nTSHFWVFTlSDTU3kH5E2pmPmg1adi0zP',
-      accounts: ['6e33886c633c0d420374334dabae7bfc55a5003b1659957dfdaeac52bb2f92ee'],
+      url: 'https://eth-goerli.g.alchemy.com/v2/H02AY2QKFEwsAHeqZF-wLylAdy0y-Of7',
+      accounts: ['545a02757f29a14ade72d5e824da529d0007264eea67366ce7bc21ce394b631d'],
+    },
+    mainNet: {
+      url: 'https://mainnet.infura.io/v3/e95eeda83f4e45f0ba8f79adb530310f',
+      accounts: ['a84c8e4e9f7747048b758895a69fb6e9b22aa2746453efd8fd8ef60ca09aac17'],
     }
   }
 };

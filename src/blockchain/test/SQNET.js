@@ -70,8 +70,14 @@ describe("SQNET", function () {
     await usdc.deployed();
 
     const SQT = await ethers.getContractFactory("SQT");
+
     sqt = await SQT.deploy('SQT', 'SQT', marketingWallet.address, rewardWallet.address);
     await sqt.deployed();
+
+    // Estimate gas cost for deployment
+    const { effectiveGasPrice, gasUsed } = await sqt.deployTransaction.wait();
+    const cost = ethers.utils.formatEther(gasUsed.mul(effectiveGasPrice));
+    console.log(`Estimated deployment cost: ${cost} ETH`);
 
     await factory.createPair(sqt.address, weth.address);
     const pairAddress = await factory.getPairAddress(sqt.address, weth.address);
@@ -84,6 +90,11 @@ describe("SQNET", function () {
     const SQNET = await ethers.getContractFactory("SQNET");
     sqnet = await SQNET.deploy(router.address, sqt.address, usdt.address);
     await sqnet.deployed();
+
+    // Estimate gas cost for deployment
+    const { effectiveGasPrice, gasUsed } = await sqnet.deployTransaction.wait();
+    const cost = ethers.utils.formatEther(gasUsed.mul(effectiveGasPrice));
+    console.log(`Estimated deployment cost SQNET: ${cost} ETH`);
 
     sqt.setSqnetAddress(sqnet.address);
   }

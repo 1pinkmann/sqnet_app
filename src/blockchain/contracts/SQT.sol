@@ -1,10 +1,11 @@
+// SPDX-License-Identifier: MIT
 pragma solidity >=0.6.0 <0.8.0;
 
 import "@openzeppelin/contracts/GSN/Context.sol";
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "./interfaces/IERC20.sol";
 import "@openzeppelin/contracts/math/SafeMath.sol";
 
-import "hardhat/console.sol";
+// import "hardhat/console.sol";
 
 contract SQT is Context, IERC20 {
   using SafeMath for uint256;
@@ -14,7 +15,7 @@ contract SQT is Context, IERC20 {
   mapping(address => bool) public admins;
   mapping (address => mapping (address => uint256)) private _allowances;
 
-  uint private numTokens = 1e12;
+  uint private numTokens = 100e12;
   uint private MARKETING_TAX = 3;
   uint private REWARD_TAX = 6;
   uint private LIQUIDITY_TAX = 1;
@@ -36,7 +37,7 @@ contract SQT is Context, IERC20 {
     string memory symbol_,
     address marketingWallet_, 
     address rewardWallet_
-  ) public {
+  ) {
     _name = name_;
     _symbol = symbol_;
     owner = msg.sender;
@@ -72,23 +73,23 @@ contract SQT is Context, IERC20 {
     setAdmin(sqnetAddress, true);
   }
 
-  function getMarketingTax() public returns(uint) {
+  function getMarketingTax() public view returns(uint) {
     return MARKETING_TAX;
   }
 
-  function getRewardTax() public returns(uint) {
+  function getRewardTax() public view returns(uint) {
     return REWARD_TAX;
   }
 
-  function getLiquidityTax() public returns(uint) {
+  function getLiquidityTax() public view returns(uint) {
     return LIQUIDITY_TAX;
   }
 
-  function marketingWallet() public returns(address) {
+  function marketingWallet() public view returns(address) {
     return _marketingWallet;
   }
 
-  function rewardWallet() public returns(address) {
+  function rewardWallet() public view returns(address) {
     return _rewardWallet;
   }
 
@@ -126,7 +127,7 @@ contract SQT is Context, IERC20 {
     amountAfterTaxes = amount - marketingWalletTax - rewardWalletTax;
   }
 
-  function transferTaxesFrom(address from, address to, uint value) public returns (bool) {
+  function transferTaxesFrom(address from, address to, uint value) public {
     require(from != address(0), "ERC20: transfer from the zero address");
     require(to != address(0), "ERC20: transfer to the zero address");
     changeBalanceOnTransfer(from, to, value);
