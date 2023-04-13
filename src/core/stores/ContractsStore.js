@@ -1,14 +1,14 @@
 import { observable, action } from 'mobx';
-import { SQT_ADDRESS, SQNET_ADDRESS } from '../../constants';
+import { SQNK_ADDRESS, SQNET_ADDRESS } from '../../constants';
 import Web3Store from './Web3Store';
 
-import sqtAbi from './../../blockchain/artifacts/contracts/SQT.sol/SQT.json';
+import sqnkAbi from './../../blockchain/artifacts/contracts/SQNK.sol/SQNK.json';
 import sqnetAbi from './../../blockchain/artifacts/contracts/SQNET.sol/SQNET.json';
 import getBn from '../../services/getBn';
 import { makeObservable } from 'mobx';
 
 export default class ContractsStore extends Web3Store {
-  @observable SqtContract;
+  @observable SqnkContract;
   @observable SqnetContract;
 
   constructor () {
@@ -17,7 +17,7 @@ export default class ContractsStore extends Web3Store {
   }
 
   fetchBalance = async (address) => {
-    const balance = await this.SqtContract.methods.balanceOf(address).call();
+    const balance = await this.SqnkContract.methods.balanceOf(address).call();
     return balance;
   }
 
@@ -26,14 +26,14 @@ export default class ContractsStore extends Web3Store {
     return lastClaimResponse;
   }
 
-  getSqtReward = async (address) => {
-    const rewardWallet = await this.SqtContract.methods.rewardWallet().call();
-    const userSqtBalance = getBn(await this.SqtContract.methods.balanceOf(address).call());
-    const totalSupply = getBn(await this.SqtContract.methods.totalSupply().call());
-    const rewardBalanceSqtBefore = getBn(await this.SqtContract.methods.balanceOf(rewardWallet).call());
+  getSqnkReward = async (address) => {
+    const rewardWallet = await this.SqnkContract.methods.rewardWallet().call();
+    const userSqnkBalance = getBn(await this.SqnkContract.methods.balanceOf(address).call());
+    const totalSupply = getBn(await this.SqnkContract.methods.totalSupply().call());
+    const rewardBalanceSqnkBefore = getBn(await this.SqnkContract.methods.balanceOf(rewardWallet).call());
 
-    const rewardPercentage = userSqtBalance.multipliedBy(getBn(100 * (10 ** 18))).dividedBy(totalSupply);
-    const userReward = rewardBalanceSqtBefore.multipliedBy(rewardPercentage).dividedBy(getBn(100)).dividedBy(getBn(10 ** 18));
+    const rewardPercentage = userSqnkBalance.multipliedBy(getBn(100 * (10 ** 18))).dividedBy(totalSupply);
+    const userReward = rewardBalanceSqnkBefore.multipliedBy(rewardPercentage).dividedBy(getBn(100)).dividedBy(getBn(10 ** 18));
     return userReward;
   }
 
@@ -44,11 +44,11 @@ export default class ContractsStore extends Web3Store {
   }
 
   fetchAvailableRewards = async (address) => {
-    const sqtRewards = await this.getSqtReward(address);
+    const sqnkRewards = await this.getSqnkReward(address);
     let usdtRewards;
 
-    if (sqtRewards >= 1) {
-      usdtRewards = await this.SqnetContract.methods.getAvailableUsdtRewards(sqtRewards.toFixed(0)).call({ from: address });
+    if (sqnkRewards >= 1) {
+      usdtRewards = await this.SqnetContract.methods.getAvailableUsdtRewards(sqnkRewards.toFixed(0)).call({ from: address });
     } else {
       usdtRewards = 0;
     }
@@ -56,8 +56,8 @@ export default class ContractsStore extends Web3Store {
     return usdtRewards / 10 ** 18;
   }
 
-  @action setSqtContract = (web3) => {
-    this.SqtContract = new web3.eth.Contract(sqtAbi.abi, SQT_ADDRESS);
+  @action setSqnkContract = (web3) => {
+    this.SqnkContract = new web3.eth.Contract(sqnkAbi.abi, SQNK_ADDRESS);
   }
 
   @action setSqnetContract = (web3) => {

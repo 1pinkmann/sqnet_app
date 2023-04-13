@@ -46,7 +46,7 @@ const Header = ({ accounts, setModalVisible, balance, disconnect }) => {
                       <div>
                         {balance ? (
                           <>
-                            <div className="text-gray">Your SQT Balance</div>
+                            <div className="text-gray">Your SQNK Balance</div>
                             <div className="text-primary sub-header">
                               {balance}
                             </div>

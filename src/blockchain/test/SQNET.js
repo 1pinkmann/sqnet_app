@@ -16,7 +16,7 @@ async function nextBlock() {
 
 describe("SQNET", function () {
   let factory;
-  let sqt;
+  let sqnk;
   let usdt;
   let router;
   let weth;
@@ -69,18 +69,18 @@ describe("SQNET", function () {
     usdc = await USDC.deploy('USDC', 'USDC');
     await usdc.deployed();
 
-    const SQT = await ethers.getContractFactory("SQT");
+    const SQNK = await ethers.getContractFactory("SQNK");
 
-    sqt = await SQT.deploy('SQT', 'SQT', marketingWallet.address, rewardWallet.address);
-    await sqt.deployed();
+    sqnk = await SQNK.deploy('SQNK', 'SQNK', marketingWallet.address, rewardWallet.address);
+    await sqnk.deployed();
 
     // Estimate gas cost for deployment
-    const { effectiveGasPrice, gasUsed } = await sqt.deployTransaction.wait();
+    const { effectiveGasPrice, gasUsed } = await sqnk.deployTransaction.wait();
     const cost = ethers.utils.formatEther(gasUsed.mul(effectiveGasPrice));
     console.log(`Estimated deployment cost: ${cost} ETH`);
 
-    await factory.createPair(sqt.address, weth.address);
-    const pairAddress = await factory.getPairAddress(sqt.address, weth.address);
+    await factory.createPair(sqnk.address, weth.address);
+    const pairAddress = await factory.getPairAddress(sqnk.address, weth.address);
     pair = await ethers.getContractAt(PairABI, pairAddress);
 
     // console.log(await factory.pairCodeHash());
@@ -88,7 +88,7 @@ describe("SQNET", function () {
 
   deploySqnet = async () => {
     const SQNET = await ethers.getContractFactory("SQNET");
-    sqnet = await SQNET.deploy(router.address, sqt.address, usdt.address);
+    sqnet = await SQNET.deploy(router.address, sqnk.address, usdt.address);
     await sqnet.deployed();
 
     // Estimate gas cost for deployment
@@ -96,26 +96,26 @@ describe("SQNET", function () {
     const cost = ethers.utils.formatEther(gasUsed.mul(effectiveGasPrice));
     console.log(`Estimated deployment cost SQNET: ${cost} ETH`);
 
-    sqt.setSqnetAddress(sqnet.address);
+    sqnk.setSqnetAddress(sqnet.address);
   }
 
   mintBalance = async () => {
     await usdt.mint(buyer.address, (ONE_TOKEN * 10).toString());
-    await sqt.transfer(buyer.address, (ONE_TOKEN * 10).toString());
+    await sqnk.transfer(buyer.address, (ONE_TOKEN * 10).toString());
   }
 
   addInitialLiquidities = async () => {
     const amountToAdd = (ONE_TOKEN * 5).toString();
 
-    await sqt.approve(router.address, (amountToAdd * 10).toString());
+    await sqnk.approve(router.address, (amountToAdd * 10).toString());
     await usdt.approve(router.address, (amountToAdd * 10).toString());
     await usdc.approve(router.address, (amountToAdd * 10).toString());
     await dao.approve(router.address, (amountToAdd * 10).toString());
 
-    await sqt.setTaxEnabled(false);
+    await sqnk.setTaxEnabled(false);
 
     await router.addLiquidityETH(
-      sqt.address,
+      sqnk.address,
       amountToAdd,
       0,
       ethers.utils.parseEther("0.1"),
@@ -124,7 +124,7 @@ describe("SQNET", function () {
       { value: ethers.utils.parseEther("1.0") }
     );
 
-    await sqt.approve(router.address, amountToAdd);
+    await sqnk.approve(router.address, amountToAdd);
 
     await router.addLiquidityETH(
       usdt.address,
@@ -156,7 +156,7 @@ describe("SQNET", function () {
       { value: ethers.utils.parseEther("1.0") }
     );
 
-    await sqt.setTaxEnabled(true);
+    await sqnk.setTaxEnabled(true);
   }
 
   function checkTaxes(balanceBeforeBn, balanceAfterBn, tax, amountOutBn) {
@@ -183,22 +183,22 @@ describe("SQNET", function () {
   }
 
   async function compareBalances(callback) {
-    const sqtBalanceBefore = getBn(await sqt.balanceOf(buyer.address));
+    const sqnkBalanceBefore = getBn(await sqnk.balanceOf(buyer.address));
     const ethBalanceBefore = await ethers.provider.getBalance(buyer.address);
-    const marketingWalletBalanceBefore = getBn(await sqt.balanceOf(marketingWallet.address));
-    const rewardWalletBalanceBefore = getBn(await sqt.balanceOf(rewardWallet.address));
+    const marketingWalletBalanceBefore = getBn(await sqnk.balanceOf(marketingWallet.address));
+    const rewardWalletBalanceBefore = getBn(await sqnk.balanceOf(rewardWallet.address));
 
     const tx = await callback();
     const gasUsed = await estimateGas(tx);
 
-    const sqtBalanceAfter = getBn(await sqt.balanceOf(buyer.address));
+    const sqnkBalanceAfter = getBn(await sqnk.balanceOf(buyer.address));
     const ethBalanceAfter = await ethers.provider.getBalance(buyer.address);
-    const marketingWalletBalanceAfter = getBn(await sqt.balanceOf(marketingWallet.address));
-    const rewardWalletBalanceAfter = getBn(await sqt.balanceOf(rewardWallet.address));
+    const marketingWalletBalanceAfter = getBn(await sqnk.balanceOf(marketingWallet.address));
+    const rewardWalletBalanceAfter = getBn(await sqnk.balanceOf(rewardWallet.address));
 
     return {
-      sqtBalanceBefore,
-      sqtBalanceAfter,
+      sqnkBalanceBefore,
+      sqnkBalanceAfter,
       ethBalanceBefore,
       ethBalanceAfter,
       marketingWalletBalanceBefore,
@@ -214,13 +214,13 @@ describe("SQNET", function () {
     return ethers.BigNumber.from(txReceipt.gasUsed * txReceipt.effectiveGasPrice);
   }
 
-  async function buyExactSqt(logs = true) {
-    const amountsOut = await router.getAmountsOut(ONE_TOKEN, [weth.address, sqt.address]);
+  async function buyExactSqnk(logs = true) {
+    const amountsOut = await router.getAmountsOut(ONE_TOKEN, [weth.address, sqnk.address]);
     const amountOut = getBn(amountsOut[1])
 
     const {
-      sqtBalanceBefore,
-      sqtBalanceAfter,
+      sqnkBalanceBefore,
+      sqnkBalanceAfter,
       ethBalanceBefore,
       ethBalanceAfter,
       marketingWalletBalanceBefore,
@@ -231,18 +231,18 @@ describe("SQNET", function () {
     } = await compareBalances(async () => {
       return router.connect(buyer).swapExactETHForTokens(
         amountsOut[0],
-        [weth.address, sqt.address],
+        [weth.address, sqnk.address],
         buyer.address,
         Math.round((Date.now() + 86400 * 2) / 1000),
         { value: ethers.utils.parseEther("1.0") }
       );
     });
-    const userReward = await getSqtReward();
+    const userReward = await getSqnkReward();
     const rewards = await sqnet.connect(buyer).getAvailableUsdtRewards(userReward.toFixed(0));
 
     if (logs) {
-      consoleGroup('BUY SQT', () => {
-        logBeforeAfter('SQT', sqtBalanceBefore, sqtBalanceAfter);
+      consoleGroup('BUY SQNK', () => {
+        logBeforeAfter('SQNK', sqnkBalanceBefore, sqnkBalanceAfter);
         logBeforeAfter('ETH', getBn(ethBalanceBefore), getBn(ethBalanceAfter));
         logBeforeAfter('MARKETING', marketingWalletBalanceBefore, marketingWalletBalanceAfter);
         logBeforeAfter('REWARD', rewardWalletBalanceBefore, rewardWalletBalanceAfter);
@@ -252,17 +252,17 @@ describe("SQNET", function () {
     checkTaxes(marketingWalletBalanceBefore, marketingWalletBalanceAfter, (MARKETING_TAX + LIQUIDITY_TAX), amountOut);
     checkTaxes(rewardWalletBalanceBefore, rewardWalletBalanceAfter, REWARD_TAX, amountOut);
     // expect(ethBalanceAfter / 10 ** 18).to.equal((+ethBalanceBefore - +ethers.utils.parseEther("1.0") - +gasUsed) / 10 ** 18);
-    expect(sqtBalanceAfter).to.equal(sqtBalanceBefore.plus(amountOut.minus(amountOut.multipliedBy(getBn(OVERALL_TAX)).toFixed(0))));
+    expect(sqnkBalanceAfter).to.equal(sqnkBalanceBefore.plus(amountOut.minus(amountOut.multipliedBy(getBn(OVERALL_TAX)).toFixed(0))));
   }
 
-  async function sellExactSqt() {
-    await sqt.connect(buyer).approve(router.address, ONE_TOKEN);
+  async function sellExactSqnk() {
+    await sqnk.connect(buyer).approve(router.address, ONE_TOKEN);
     const amountIn = ONE_TOKEN - (ONE_TOKEN * (OVERALL_TAX));
-    const [_, ethOut] = await router.getAmountsOut(amountIn.toString(), [sqt.address, weth.address]);
+    const [_, ethOut] = await router.getAmountsOut(amountIn.toString(), [sqnk.address, weth.address]);
 
     const {
-      sqtBalanceBefore,
-      sqtBalanceAfter,
+      sqnkBalanceBefore,
+      sqnkBalanceAfter,
       ethBalanceBefore,
       ethBalanceAfter,
       marketingWalletBalanceBefore,
@@ -274,14 +274,14 @@ describe("SQNET", function () {
       return router.connect(buyer).swapExactTokensForETHSupportingFeeOnTransferTokens(
         ONE_TOKEN,
         ethOut,
-        [sqt.address, weth.address],
+        [sqnk.address, weth.address],
         buyer.address,
         Math.round((Date.now() + 86400 * 2) / 1000)
       );
     });
 
-    consoleGroup('SELL SQT', () => {
-      logBeforeAfter('SQT', sqtBalanceBefore, sqtBalanceAfter);
+    consoleGroup('SELL SQNK', () => {
+      logBeforeAfter('SQNK', sqnkBalanceBefore, sqnkBalanceAfter);
       logBeforeAfter('ETH', getBn(ethBalanceBefore), getBn(ethBalanceAfter));
       logBeforeAfter('MARKETING', marketingWalletBalanceBefore, marketingWalletBalanceAfter);
       logBeforeAfter('REWARD', rewardWalletBalanceBefore, rewardWalletBalanceAfter);
@@ -291,33 +291,33 @@ describe("SQNET", function () {
     checkTaxes(rewardWalletBalanceBefore, rewardWalletBalanceAfter, REWARD_TAX, getBn(ONE_TOKEN));
 
     expect(ethBalanceAfter / ONE_TOKEN).to.equal((+ethBalanceBefore + +ethOut - +gasUsed) / ONE_TOKEN);
-    expect(sqtBalanceAfter).to.equal(sqtBalanceBefore.minus(getBn(ONE_TOKEN)));
+    expect(sqnkBalanceAfter).to.equal(sqnkBalanceBefore.minus(getBn(ONE_TOKEN)));
   }
 
-  async function getSqtReward() {
-    const userSqtBalance = getBn(await sqt.balanceOf(buyer.address));
-    const totalSupply = getBn(await sqt.totalSupply());
-    const rewardBalanceSqtBefore = getBn(await sqt.balanceOf(rewardWallet.address));
+  async function getSqnkReward() {
+    const userSqnkBalance = getBn(await sqnk.balanceOf(buyer.address));
+    const totalSupply = getBn(await sqnk.totalSupply());
+    const rewardBalanceSqnkBefore = getBn(await sqnk.balanceOf(rewardWallet.address));
 
-    const rewardPercentage = userSqtBalance.multipliedBy(getBn(100 * (10 ** 18))).dividedBy(totalSupply);
-    const userReward = rewardBalanceSqtBefore.multipliedBy(rewardPercentage).dividedBy(getBn(100)).dividedBy(getBn(10 ** 18));
+    const rewardPercentage = userSqnkBalance.multipliedBy(getBn(100 * (10 ** 18))).dividedBy(totalSupply);
+    const userReward = rewardBalanceSqnkBefore.multipliedBy(rewardPercentage).dividedBy(getBn(100)).dividedBy(getBn(10 ** 18));
     return userReward;
   }
 
   async function convertTaxIntoEth() {
-    const userReward = await getSqtReward();
-    const amountsOut = await router.getAmountsOut(userReward.toFixed(0), [sqt.address, weth.address]);
+    const userReward = await getSqnkReward();
+    const amountsOut = await router.getAmountsOut(userReward.toFixed(0), [sqnk.address, weth.address]);
     return amountsOut[1];
   }
 
-  // async function buySqtForExactEth () {
-  //   const amounts = await router.getAmountsIn(ONE_TOKEN, [weth.address, sqt.address]);
+  // async function buySqnkForExactEth () {
+  //   const amounts = await router.getAmountsIn(ONE_TOKEN, [weth.address, sqnk.address]);
   //   const amountIn = getBn(amounts[0]);
   //   const oneTokenBn = getBn(ONE_TOKEN);
 
   //   const {
-  //     sqtBalanceBefore,
-  //     sqtBalanceAfter,
+  //     sqnkBalanceBefore,
+  //     sqnkBalanceAfter,
   //     usdtBalanceBefore,
   //     usdtBalanceAfter,
   //     marketingWalletBalanceBefore,
@@ -328,15 +328,15 @@ describe("SQNET", function () {
   //     await router.connect(buyer).swapTokensForExactETH(
   //       ethers.utils.parseEther('1.0'), 
   //       amountIn.toString(),
-  //       [usdt.address, sqt.address],
+  //       [usdt.address, sqnk.address],
   //       buyer.address, 
   //       Math.round((Date.now() + 86400 * 2) / 1000),
   //       { value: ethers.utils.parseEther('1.0') }
   //     );
   //   });
 
-  //   consoleGroup('BUY SQT FOR EXACT USDT', () => {
-  //     logBeforeAfter('SQT', sqtBalanceBefore, sqtBalanceAfter);
+  //   consoleGroup('BUY SQNK FOR EXACT USDT', () => {
+  //     logBeforeAfter('SQNK', sqnkBalanceBefore, sqnkBalanceAfter);
   //     logBeforeAfter('USDT', usdtBalanceBefore, usdtBalanceAfter);
   //     logBeforeAfter('MARKETING', marketingWalletBalanceBefore, marketingWalletBalanceAfter);
   //     logBeforeAfter('REWARD', rewardWalletBalanceBefore, rewardWalletBalanceAfter);
@@ -346,76 +346,78 @@ describe("SQNET", function () {
   //   checkTaxes(rewardWalletBalanceBefore, rewardWalletBalanceAfter, REWARD_TAX, getBn(amounts[1]));
 
   //   expect(usdtBalanceAfter).to.equal(usdtBalanceBefore.minus(getBn(amountIn)));
-  //   expect(sqtBalanceAfter).to.equal(sqtBalanceBefore.plus(oneTokenBn.minus(oneTokenBn.multipliedBy(getBn(OVERALL_TAX)))));
+  //   expect(sqnkBalanceAfter).to.equal(sqnkBalanceBefore.plus(oneTokenBn.minus(oneTokenBn.multipliedBy(getBn(OVERALL_TAX)))));
   // }
 
-  it("Buy/Sell exact SQT for ETH", async () => {
-    await buyExactSqt();
-    await sellExactSqt();
+  it("Buy/Sell exact SQNK for ETH", async () => {
+    await buyExactSqnk();
+    await sellExactSqnk();
   });
 
-  // // it("Buy SQT for exact ETH", async () => {
-  // //   await buySqtForExactEth();
+  // // it("Buy SQNK for exact ETH", async () => {
+  // //   await buySqnkForExactEth();
   // // });
 
-  // it("Buy exact SQT and convert tax", async () => {
-  //   await buyExactSqt(false);
+  it("Buy exact SQNK and convert tax", async () => {
+    await buyExactSqnk(false);
 
-  //   const marketingSqtBefore = getBn(await sqt.balanceOf(marketingWallet.address));
-  //   const marketingEthBefore = await ethers.provider.getBalance(marketingWallet.address);
-  //   const pairEthBefore = getBn(await weth.balanceOf(pair.address));
-  //   const pairSqtBefore = getBn(await sqt.balanceOf(pair.address));
+    const marketingSqnkBefore = getBn(await sqnk.balanceOf(marketingWallet.address));
+    const marketingEthBefore = await ethers.provider.getBalance(marketingWallet.address);
+    const pairEthBefore = getBn(await weth.balanceOf(pair.address));
+    const pairSqnkBefore = getBn(await sqnk.balanceOf(pair.address));
 
-  //   const liquidityAmountSqt = getBn(marketingSqtBefore.multipliedBy(getBn(LIQUIDITY_TAX)).toFixed(0));
-  //   const marketingAmountSqt = marketingSqtBefore.minus(liquidityAmountSqt);
+    const liquidityAmountSqnk = getBn(marketingSqnkBefore.multipliedBy(getBn(LIQUIDITY_TAX)).toFixed(0));
+    const marketingAmountSqnk = marketingSqnkBefore.minus(liquidityAmountSqnk);
 
-  //   const marketingAmountsOut = await router.getAmountsOut(marketingAmountSqt.toString(), [sqt.address, weth.address]);
-  //   // const liquidityAmountsOut = await router.getAmountsOut(liquidityAmountSqt.dividedBy(2).toFixed(0), [sqt.address, weth.address]);
+    const marketingAmountsOut = await router.getAmountsOut(marketingAmountSqnk.toString(), [sqnk.address, weth.address]);
+    // const liquidityAmountsOut = await router.getAmountsOut(liquidityAmountSqnk.dividedBy(2).toFixed(0), [sqnk.address, weth.address]);
 
-  //   await sqnet.swapMarketingTaxesForETH();
+    await sqnet.swapMarketingTaxesForETH();
 
-  //   const marketingSqtAfter = getBn(await sqt.balanceOf(marketingWallet.address));
-  //   const marketingEthtAfter = await ethers.provider.getBalance(marketingWallet.address);
-  //   const pairEthAfter = getBn(await weth.balanceOf(pair.address));
-  //   const pairSqtAfter = getBn(await sqt.balanceOf(pair.address));
+    const marketingSqnkAfter = getBn(await sqnk.balanceOf(marketingWallet.address));
+    const marketingEthtAfter = await ethers.provider.getBalance(marketingWallet.address);
+    const pairEthAfter = getBn(await weth.balanceOf(pair.address));
+    const pairSqnkAfter = getBn(await sqnk.balanceOf(pair.address));
 
-  //   consoleGroup('Convert tax into USDT', () => {
-  //     logBeforeAfter('SQT', marketingSqtBefore, marketingSqtAfter);
-  //     logBeforeAfter('ETH', getBn(marketingEthBefore), getBn(marketingEthtAfter));
-  //     logBeforeAfter('PAIR SQT', pairSqtBefore, pairSqtAfter);
-  //     logBeforeAfter('PAIR ETH', pairEthBefore, pairEthAfter);
-  //   });
+    consoleGroup('Convert tax into USDT', () => {
+      logBeforeAfter('SQNK', marketingSqnkBefore, marketingSqnkAfter);
+      logBeforeAfter('ETH', getBn(marketingEthBefore), getBn(marketingEthtAfter));
+      logBeforeAfter('PAIR SQNK', pairSqnkBefore, pairSqnkAfter);
+      logBeforeAfter('PAIR ETH', pairEthBefore, pairEthAfter);
+    });
 
-  //   expect(marketingSqtAfter).to.equal(marketingSqtBefore.minus(marketingSqtBefore));
-  //   expect(marketingEthtAfter / ONE_TOKEN).to.equal((+marketingEthBefore + +marketingAmountsOut[1]) / ONE_TOKEN);
-  //   // expect(pairEthAfter).to.equal(pairEthBefore.minus(getBn(marketingAmountsOut[1])).minus(getBn(liquidityAmountsOut[1])));
-  // });
+    expect(marketingSqnkAfter).to.equal(marketingSqnkBefore.minus(marketingSqnkBefore));
+    expect(marketingEthtAfter / ONE_TOKEN).to.equal((+marketingEthBefore + +marketingAmountsOut[1]) / ONE_TOKEN);
+    // expect(pairEthAfter).to.equal(pairEthBefore.minus(getBn(marketingAmountsOut[1])).minus(getBn(liquidityAmountsOut[1])));
+  });
 
-  // it("Claim rewards: ETH/ETH", async () => {
-  //   const rewardTokens = [weth.address, weth.address];
-  //   await buyExactSqt();
+  it("Claim rewards: ETH/ETH while excluded from rewards", async () => {
+    // await sqnet.setExcludedFromRewards(buyer.address, true);
+    // const buyerIsExcludedFromRewards = await sqnet.getExcludedFromRewards(buyer.address);
+    const rewardTokens = [weth.address, weth.address];
+    await buyExactSqnk();
 
-  //   const ethBalanceBefore = await ethers.provider.getBalance(buyer.address);
-  //   const ethOut = await convertTaxIntoEth();
+    const ethBalanceBefore = await ethers.provider.getBalance(buyer.address);
+    const ethOut = await convertTaxIntoEth();
 
-  //   const tx = await sqnet.connect(buyer).claimRewards(rewardTokens[0], rewardTokens[1]);
-  //   const gasUsed = await estimateGas(tx);
+    const tx = await sqnet.connect(buyer).claimRewards(rewardTokens[0], rewardTokens[1]);
+    const gasUsed = await estimateGas(tx);
 
-  //   const ethBalanceAfter = await ethers.provider.getBalance(buyer.address);
+    const ethBalanceAfter = await ethers.provider.getBalance(buyer.address);
 
-  //   consoleGroup('GET ETH', () => {
-  //     logBeforeAfter('ETH', getBn(ethBalanceBefore), getBn(ethBalanceAfter));
-  //   });
+    consoleGroup('GET ETH', () => {
+      logBeforeAfter('ETH', getBn(ethBalanceBefore), getBn(ethBalanceAfter));
+    });
 
-  //   // await time.increase(oneDay);
-  //   // await sqnet.connect(buyer).claimRewards(rewardTokens[0], rewardTokens[1]);
+    // await time.increase(oneDay);
+    // await sqnet.connect(buyer).claimRewards(rewardTokens[0], rewardTokens[1]);
 
-  //   expect((ethBalanceAfter / ONE_TOKEN).toFixed(11).toString()).to.equal(((+ethBalanceBefore + +ethOut - +gasUsed) / ONE_TOKEN).toFixed(11).toString());
-  // });
+    expect((ethBalanceAfter / ONE_TOKEN).toFixed(11).toString()).to.equal(((+ethBalanceBefore + +ethOut - +gasUsed) / ONE_TOKEN).toFixed(11).toString());
+  });
 
   it("Claim rewards: DAO/USDT", async () => {
     const rewardTokens = [dao.address, usdt.address];
-    await buyExactSqt();
+    await buyExactSqnk();
 
     const usdtBalanceBefore = getBn(await usdt.balanceOf(buyer.address));
     const daoBalanceBefore = getBn(await dao.balanceOf(buyer.address));
@@ -437,7 +439,7 @@ describe("SQNET", function () {
 
   // it("Claim rewards: DAO/USDC", async () => {
   //   const rewardTokens = [dao.address, usdc.address];
-  //   await buyExactSqt();
+  //   await buyExactSqnk();
 
   //   const daoBalanceBefore = getBn(await dao.balanceOf(buyer.address));
   //   const usdcBalanceBefore = getBn(await usdc.balanceOf(buyer.address));
@@ -458,7 +460,7 @@ describe("SQNET", function () {
   // });
 
   it("Remove liquidity ETH", async () => {
-    await buyExactSqt();
+    await buyExactSqnk();
     const liquidity = await pair.balanceOf(owner.address);
     await pair.approve(sqnet.address, liquidity);
     await sqnet.removeLiquidityETH(pair.address, liquidity.toString(), ONE_TOKEN, ONE_TOKEN, owner.address);
@@ -466,10 +468,10 @@ describe("SQNET", function () {
 
   it("Remove liquidity USDT", async () => {
     const amountToAdd = ONE_TOKEN;
-    sqt.connect(buyer).approve(router.address, amountToAdd);
+    sqnk.connect(buyer).approve(router.address, amountToAdd);
     usdt.connect(buyer).approve(router.address, amountToAdd);
     await router.connect(buyer).addLiquidity(
-      sqt.address,
+      sqnk.address,
       usdt.address,
       amountToAdd,
       amountToAdd,
@@ -478,10 +480,10 @@ describe("SQNET", function () {
       buyer.address,
       Math.round((Date.now() + 86400 * 2) / 1000)
     );
-    const pairAddress = await factory.getPairAddress(sqt.address, usdt.address);
+    const pairAddress = await factory.getPairAddress(sqnk.address, usdt.address);
     const pair = await ethers.getContractAt(PairABI, pairAddress);
     const liquidity = await pair.balanceOf(buyer.address);
     await pair.connect(buyer).approve(router.address, liquidity);
-    await router.connect(buyer).removeLiquidity(sqt.address, usdt.address, liquidity.toString(), (amountToAdd / 2).toString(), (amountToAdd / 2).toString(), buyer.address, Math.round((Date.now() + 86400 * 2) / 1000));
+    await router.connect(buyer).removeLiquidity(sqnk.address, usdt.address, liquidity.toString(), (amountToAdd / 2).toString(), (amountToAdd / 2).toString(), buyer.address, Math.round((Date.now() + 86400 * 2) / 1000));
   });
 });

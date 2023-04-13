@@ -5,32 +5,31 @@
 // will compile your contracts, add the Hardhat Runtime Environment's members to the
 // global scope, and execute the script.
 const { ethers } = require("hardhat");
-const PairABI = require("../artifacts/contracts/core/UniswapV2Pair.sol/UniswapV2Pair.json").abi;
+// const PairABI = require("../artifacts/contracts/core/UniswapV2Pair.sol/UniswapV2Pair.json").abi;
 const RouterABI = require("../artifacts/contracts/periphery/UniswapV2Router02.sol/UniswapV2Router02.json").abi;
 const FactoryABI = require("../artifacts/contracts/core/UniswapV2Factory.sol/UniswapV2Factory.json").abi;
 const TKNAbi = require("../artifacts/contracts/core/TKN.sol/TKN.json").abi;
-const SQTAbi = require("../artifacts/contracts/SQT.sol/SQT.json").abi;
+const SQNKAbi = require("../artifacts/contracts/SQNK.sol/SQNK.json").abi;
 
-const PANCAKE_ROUTER = '0xeff92a263d31888d860bd50809a8d171709b7b1c';
-const PANCAKE_FACTORY = '0x1097053Fd2ea711dad45caCcc45EfF7548fCB362';
-const PANCAKE_WETH = '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6';
+const PANCAKE_FACTORY = '0x6725F303b657a9451d8BA641348b6761A6CC7a17';
+const PANCAKE_ROUTER = '0xD99D1c33F9fC3444f8101754aBC46c52416550D1';
 
 async function main() {
   let factory;
-  let sqt;
+  let sqnk;
   let usdt;
   let router;
-  let pair;
+  let weth;
   let sqnet;
   let dao;
   let usdc;
   const ONE_TOKEN = (10 ** 18).toString();
 
   // const [owner, account1, buyer, rewardWallet, marketingWallet] = await ethers.getSigners();
-  const owner = '0xBE5dd7E8982e493BfFb746f5A86876baDb391078';
-  const buyer = '0x20a361F671EC47A5bE9F2bf828A6cCB2e39bf402';
-  const rewardWallet = '0x1bd9652c0ad7b6a71a3C16603844FBb5cCE69E99';
-  const marketingWallet = '0x3a4bdfdDF5CB7bfeE236e50495Ae2CA5BD4F6cFC';
+  const owner = '0x1EA8D13184356100B01f48525C57B0A7eF89CE77';
+  const buyer = '0x95F9cBf911400D2B551A9276D8D7d9e9c0fb191a';
+  const rewardWallet = '0x501b807055006c20d3B94582B96dcdf5aD695a0a';
+  const marketingWallet = '0x76b4556bFD6419CEae98e20670f377988F797FDE';
 
   const getPancakeFactory = async () => {
     factory = await ethers.getContractAt(FactoryABI, PANCAKE_FACTORY);
@@ -53,18 +52,18 @@ async function main() {
     // usdc = await USDC.deploy('USDC', 'USDC');
     // await usdc.deployed();
 
-    usdt = await ethers.getContractAt(TKNAbi, '0x9E1bA6DD8B2E2d84072820802093e46C24d7EB9d');
-    dao = await ethers.getContractAt(TKNAbi, '0x97917Fc075f25E71ce177381b4d9Beb2a53e8DF6');
-    usdc = await ethers.getContractAt(TKNAbi, '0x80c324364D98320eae65c6f2E68d58e0360a5aC7');
-    sqt = await ethers.getContractAt(SQTAbi, '0x2596454C4341e1c05d34cb298062d1aBb18B76Be');
+    usdt = await ethers.getContractAt(TKNAbi, '0xe74ebA94EB1EE7A709ee2c030513C030b6cA771e');
+    dao = await ethers.getContractAt(TKNAbi, '0x284502da80D2fF9c6D347649B2d39B38f25Bf0A0');
+    usdc = await ethers.getContractAt(TKNAbi, '0x089B4BF9fE065E58D2c61A736e1f8f34fC8eEfec');
+    sqnk = await ethers.getContractAt(SQNKAbi, '0xd6dBc0eb6D6830A227fA6d28386A9551c78d0d91');
 
-    // const SQT = await ethers.getContractFactory("SQT");
-    // sqt = await SQT.deploy('SQT', 'SQT', marketingWallet, rewardWallet);
-    // await sqt.deployed();
-    // console.log(sqt.address);
-    // const createTrx = await factory.createPair(sqt.address, usdt.address);
+    // const SQNK = await ethers.getContractFactory("SQNK");
+    // sqnk = await SQNK.deploy('SQNK', 'SQNK', marketingWallet, rewardWallet);
+    // await sqnk.deployed();
+    // console.log(sqnk.address);
+    // const createTrx = await factory.createPair(sqnk.address, usdt.address);
     // await createTrx.wait();
-    // const pairAddress = await factory.getPair(sqt.address, usdt.address);
+    // const pairAddress = await factory.getPair(sqnk.address, usdt.address);
     // pair = await ethers.getContractAt(PairABI, pairAddress);
 
     // console.log(await factory.pairCodeHash());
@@ -72,21 +71,20 @@ async function main() {
 
   const deploySqnet = async () => {
     const SQNET = await ethers.getContractFactory("SQNET");
-    sqnet = await SQNET.deploy(router.address, sqt.address, usdt.address);
+    sqnet = await SQNET.deploy(router.address, sqnk.address, usdt.address);
     await sqnet.deployed();
 
-    await sqt.setSqnetAddress(sqnet.address);
+    await sqnk.setSqnetAddress(sqnet.address);
   }
 
   const mintBalance = async () => {
-    await sqt.transfer(buyer, (ONE_TOKEN * 300).toString());
-    await usdt.transfer(buyer, (ONE_TOKEN * 300).toString());
+    await sqnk.transfer(buyer, (ONE_TOKEN * 300).toString());
   }
 
   const addInitialLiquidities = async () => {
     const amountToAdd = (ONE_TOKEN * 5).toString();
 
-    await sqt.approve(router.address, (amountToAdd * 10).toString());
+    await sqnk.approve(router.address, (amountToAdd * 10).toString());
     await usdt.approve(router.address, (amountToAdd * 10).toString());
     await usdc.approve(router.address, (amountToAdd * 10).toString());
     await dao.approve(router.address, (amountToAdd * 10).toString());
@@ -95,68 +93,70 @@ async function main() {
       usdt.address,
       amountToAdd,
       0,
-      ethers.utils.parseEther("0.05"),
+      ethers.utils.parseEther("0.001"),
       owner,
       Math.round((Date.now() + 86400 * 2) / 1000),
-      { value: ethers.utils.parseEther("0.1") }
+      { value: ethers.utils.parseEther("0.002") }
     );
 
-    await sqt.approve(router.address, amountToAdd);
+    await sqnk.approve(router.address, amountToAdd);
 
     await router.addLiquidityETH(
-      sqt.address,
+      sqnk.address,
       amountToAdd,
       0,
-      ethers.utils.parseEther("0.05"),
+      ethers.utils.parseEther("0.001"),
       owner,
       Math.round((Date.now() + 86400 * 2) / 1000),
-      { value: ethers.utils.parseEther("0.1") }
+      { value: ethers.utils.parseEther("0.002") }
     );
 
     await router.addLiquidityETH(
       usdt.address,
       amountToAdd,
       0,
-      ethers.utils.parseEther("0.05"),
+      ethers.utils.parseEther("0.001"),
       owner,
       Math.round((Date.now() + 86400 * 2) / 1000),
-      { value: ethers.utils.parseEther("0.1") }
+      { value: ethers.utils.parseEther("0.002") }
     );
 
     await router.addLiquidityETH(
       usdc.address,
       amountToAdd,
       0,
-      ethers.utils.parseEther("0.05"),
+      ethers.utils.parseEther("0.001"),
       owner,
       Math.round((Date.now() + 86400 * 2) / 1000),
-      { value: ethers.utils.parseEther("0.1") }
+      { value: ethers.utils.parseEther("0.002") }
     );
 
     await router.addLiquidityETH(
       dao.address,
       amountToAdd,
       0,
-      ethers.utils.parseEther("0.05"),
+      ethers.utils.parseEther("0.001"),
       owner,
       Math.round((Date.now() + 86400 * 2) / 1000),
-      { value: ethers.utils.parseEther("0.1") }
+      { value: ethers.utils.parseEther("0.002") }
     );
   }
 
   await getPancakeFactory();
   await getPancakeRouter();
   await createPair();
+  // await mintBalance();
   await deploySqnet();
   console.log('USDT ADDRESS', usdt.address);
-  console.log('SQT ADDRESS', sqt.address);
+  console.log('SQNK ADDRESS', sqnk.address);
   console.log('DAO ADDRESS', dao.address);
   console.log('USDC ADDRESS', usdc.address);
   console.log('SQNET ADDRESS', sqnet.address);
-  // await mintBalance();
-  // await addInitialLiquidities();
+  console.log('ROUTER ADDRESS', router.address);
+  console.log('FACTORY ADDRESS', factory.address);
+  await addInitialLiquidities();
 
-  // console.log('SQT/USDT PAIR ADDRESS', pair.address);
+  // console.log('SQNK/USDT PAIR ADDRESS', pair.address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere

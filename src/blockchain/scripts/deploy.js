@@ -8,18 +8,18 @@ const { ethers } = require("hardhat");
 const PairABI = require("../artifacts/contracts/core/UniswapV2Pair.sol/UniswapV2Pair.json").abi;
 const RouterABI = require("../artifacts/contracts/periphery/UniswapV2Router02.sol/UniswapV2Router02.json").abi;
 const FactoryABI = require("../artifacts/contracts/core/UniswapV2Factory.sol/UniswapV2Factory.json").abi;
-const SQTAbi = require("../artifacts/contracts/SQT.sol/SQT.json").abi;
+const SQNKAbi = require("../artifacts/contracts/SQNK.sol/SQNK.json").abi;
 // const USDTAbi = require("../artifacts/contracts/core/ERC20.sol/ERC20.json").abi;
 
 const PANCAKE_ROUTER = '0xeff92a263d31888d860bd50809a8d171709b7b1c';
 const PANCAKE_FACTORY = '0x1097053Fd2ea711dad45caCcc45EfF7548fCB362';
 const PANCEKE_WETH = '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6';
 const USDT_ADDRESS = '0x1a4302EAF1aE103830BfEdd3126Dfe1b74b9dFD5';
-const SQT_ADDRESS = '0x56823A9273ba6eC8dE3aDA452f44a0C0152cFEd1'
+const SQNK_ADDRESS = '0x56823A9273ba6eC8dE3aDA452f44a0C0152cFEd1'
 
 async function main() {
   let factory;
-  let sqt;
+  let sqnk;
   let usdt;
   let router;
   let weth;
@@ -60,15 +60,15 @@ async function main() {
     router = await ethers.getContractAt(RouterABI, PANCAKE_ROUTER);
   }
 
-  const getSqt = async () => {
-    sqt = await ethers.getContractAt(SQTAbi, SQT_ADDRESS);
+  const getSqnk = async () => {
+    sqnk = await ethers.getContractAt(SQNKAbi, SQNK_ADDRESS);
   }
 
   const getUsdt = async () => {
     // usdt = await ethers.getContractAt(USDTAbi, USDT_ADDRESS);
   }
 
-  const deploySqt = async () => {
+  const deploySqnk = async () => {
     // const USDT = await ethers.getContractFactory("TKN");
     // usdt = await USDT.deploy('USDT', 'USDT');
     // await usdt.deployed();
@@ -81,15 +81,15 @@ async function main() {
     // usdc = await USDC.deploy('USDC', 'USDC');
     // await usdc.deployed();
 
-    const SQT = await ethers.getContractFactory("SQT");
-    sqt = await SQT.deploy('Squid Network', 'SNE', marketingWallet, rewardWallet);
-    await sqt.deployed();
+    const SQNK = await ethers.getContractFactory("sq");
+    sqnk = await SQNK.deploy('Squid Network', 'SNE', marketingWallet, rewardWallet);
+    await sqnk.deployed();
   }
 
   const getPair = async () => {
-    // const createTrx = await factory.createPair(sqt.address, usdt.address);
+    // const createTrx = await factory.createPair(sqnk.address, usdt.address);
     // await createTrx.wait();
-    pairAddress = await factory.getPair(sqt.address, usdt.address);
+    pairAddress = await factory.getPair(sqnk.address, usdt.address);
     // pair = await ethers.getContractAt(PairABI, pairAddress);
 
     // console.log(await factory.pairCodeHash());
@@ -97,14 +97,14 @@ async function main() {
 
   const deploySqnet = async () => {
     const SQNET = await ethers.getContractFactory("SQNET");
-    sqnet = await SQNET.deploy(router.address, sqt.address, usdt.address, pairAddress);
+    sqnet = await SQNET.deploy(router.address, sqnk.address, usdt.address, pairAddress);
     await sqnet.deployed();
 
-    await sqt.setSqnetAddress(sqnet.address);
+    await sqnk.setSqnetAddress(sqnet.address);
   }
 
   const mintBalance = async () => {
-    await sqt.transfer(buyer, (ONE_TOKEN * 10).toString());
+    await sqnk.transfer(buyer, (ONE_TOKEN * 10).toString());
     await usdt.transfer(buyer, (ONE_TOKEN * 10).toString());
   }
 
@@ -116,13 +116,13 @@ async function main() {
   const addInitialLiquidities = async () => {
     const amountToAdd = (ONE_TOKEN * 5).toString();
 
-    await sqt.approve(router.address, (amountToAdd * 10).toString());
+    await sqnk.approve(router.address, (amountToAdd * 10).toString());
     await usdt.approve(router.address, (amountToAdd * 10).toString());
     await usdc.approve(router.address, (amountToAdd * 10).toString());
     await dao.approve(router.address, (amountToAdd * 10).toString());
 
 
-    await sqt.setTaxEnabled(false);
+    await sqnk.setTaxEnabled(false);
 
     await router.addLiquidityETH(
       usdt.address,
@@ -134,10 +134,10 @@ async function main() {
       { value: ethers.utils.parseEther("0.05") }
     );
 
-    await sqt.approve(router.address, amountToAdd);
+    await sqnk.approve(router.address, amountToAdd);
 
     await router.addLiquidity(
-      sqt.address,
+      sqnk.address,
       usdt.address,
       amountToAdd,
       amountToAdd,
@@ -169,14 +169,14 @@ async function main() {
       Math.round((Date.now() + 86400 * 2) / 1000)
     );
 
-    await sqt.setTaxEnabled(true);
+    await sqnk.setTaxEnabled(true);
   }
 
   // await getPancakeFactory();
   // await getPancakeRouter();
-  // await getSqt();
+  // await getSqnk();
   // await getUsdt();
-  await deploySqt();
+  await deploySqnk();
   // await getPair();
   // await deploySqnet();
   // await mintBalance();
@@ -184,7 +184,7 @@ async function main() {
 
   // console.log('ROUTER ADDRESS', router.address);
   // console.log('USDT ADDRESS', usdt.address);
-  console.log('SQT ADDRESS', sqt.address);
+  console.log('SQNK ADDRESS', sqnk.address);
   // console.log('DAO ADDRESS', dao.address);
   // console.log('USDC ADDRESS', usdc.address);
   // console.log('SQNET ADDRESS', sqnet.address);

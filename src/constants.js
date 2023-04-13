@@ -10,7 +10,7 @@ import usdc from "./assets/images/usdc.svg";
 import usdt from "./assets/images/usdt.svg";
 
 export const isTestnet = true;
-export const SQT_ADDRESS = '0x2596454C4341e1c05d34cb298062d1aBb18B76Be';
+export const SQNK_ADDRESS = '0x2596454C4341e1c05d34cb298062d1aBb18B76Be';
 export const SQNET_ADDRESS = '0x5DBBb86b2729325D96d628E1E6A64BeFa0340E0F';
 
 const options = [

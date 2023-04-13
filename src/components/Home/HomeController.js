@@ -30,7 +30,7 @@ class HomeController extends Component {
     if (!$p.web3Store.web3 || !$p.web3Store.accounts[0]) return;
 
     $p.contractsStore.setSqnetContract($p.web3Store.web3);
-    $p.contractsStore.setSqtContract($p.web3Store.web3);
+    $p.contractsStore.setSqnkContract($p.web3Store.web3);
 
     await this.viewModel.fetchBalance();
     await this.viewModel.fetchAvailableRewards();
@@ -94,7 +94,7 @@ class HomeController extends Component {
       toast(  
         <span>
           {Number(this.viewModel.balance) === 0 ? 
-            'No SQT balance available' : 
+            'No SQNK balance available' : 
             Number(this.viewModel.availableRewards) === 0 ?
             'No rewards avaialble' : 
             <>

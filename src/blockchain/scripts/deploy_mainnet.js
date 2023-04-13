@@ -5,14 +5,14 @@
 // will compile your contracts, add the Hardhat Runtime Environment's members to the
 // global scope, and execute the script.
 const { ethers } = require("hardhat");
-const SQTAbi = require("../artifacts/contracts/SQT.sol/SQT.json").abi;
+const SQNKAbi = require("../artifacts/contracts/SQNK.sol/SQNK.json").abi;
 
 const PANCAKE_ROUTER = '0xEfF92A263d31888d860bD50809A8D171709b7b1c';
 const PANCAKE_FACTORY = '0x1097053Fd2ea711dad45caCcc45EfF7548fCB362';
 
 async function main() {
   let factory;
-  let sqt;
+  let sqnk;
   let router;
   let pairAddress;
   let sqnet;
@@ -27,18 +27,18 @@ async function main() {
     // usdt = await ethers.getContractAt(USDTAbi, USDT_ADDRESS);
   }
 
-  const deploySqt = async () => {
-    const SQT = await ethers.getContractFactory("SQT");
-    sqt = await SQT.deploy('Squid Network', 'SQNK', marketingWallet, rewardWallet);
-    await sqt.deployed();
-    console.log('SQT ADDRESS', sqt.address);
-    // await sqt.transferOwnership(owner.address);
+  const deploySqnk = async () => {
+    const SQNK = await ethers.getContractFactory("SQNK");
+    sqnk = await SQNK.deploy('Squid Network', 'SQNK', marketingWallet, rewardWallet);
+    await sqnk.deployed();
+    console.log('SQNK ADDRESS', sqnk.address);
+    // await sqnk.transferOwnership(owner.address);
   }
 
   // const getPair = async () => {
-    // const createTrx = await factory.createPair(sqt.address, usdt.address);
+    // const createTrx = await factory.createPair(sqnk.address, usdt.address);
     // await createTrx.wait();
-    // pairAddress = await factory.getPair(sqt.address, usdt.address);
+    // pairAddress = await factory.getPair(sqnk.address, usdt.address);
     // pair = await ethers.getContractAt(PairABI, pairAddress);
 
     // console.log(await factory.pairCodeHash());
@@ -46,13 +46,13 @@ async function main() {
 
   // const deploySqnet = async () => {
   //   const SQNET = await ethers.getContractFactory("SQNET");
-  //   sqnet = await SQNET.deploy(router.address, sqt.address, usdt.address, pairAddress);
+  //   sqnet = await SQNET.deploy(router.address, sqnk.address, usdt.address, pairAddress);
   //   await sqnet.deployed();
 
-  //   await sqt.setSqnetAddress(sqnet.address);
+  //   await sqnk.setSqnetAddress(sqnet.address);
   // }
 
-  await deploySqt();
+  await deploySqnk();
   // await deploySqnet();
 }
 
