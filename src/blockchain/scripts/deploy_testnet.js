@@ -84,61 +84,51 @@ async function main() {
   const addInitialLiquidities = async () => {
     const amountToAdd = (ONE_TOKEN * 5).toString();
 
-    await sqnk.approve(router.address, (amountToAdd * 10).toString());
+    // await sqnk.approve(router.address, (amountToAdd * 10).toString());
     await usdt.approve(router.address, (amountToAdd * 10).toString());
     await usdc.approve(router.address, (amountToAdd * 10).toString());
     await dao.approve(router.address, (amountToAdd * 10).toString());
 
-    await router.addLiquidityETH(
-      usdt.address,
-      amountToAdd,
-      0,
-      ethers.utils.parseEther("0.001"),
-      owner,
-      Math.round((Date.now() + 86400 * 2) / 1000),
-      { value: ethers.utils.parseEther("0.002") }
-    );
+    // await sqnk.approve(router.address, amountToAdd);
 
-    await sqnk.approve(router.address, amountToAdd);
-
-    await router.addLiquidityETH(
-      sqnk.address,
-      amountToAdd,
-      0,
-      ethers.utils.parseEther("0.001"),
-      owner,
-      Math.round((Date.now() + 86400 * 2) / 1000),
-      { value: ethers.utils.parseEther("0.002") }
-    );
+    // await router.addLiquidityETH(
+    //   sqnk.address,
+    //   amountToAdd,
+    //   0,
+    //   ethers.utils.parseEther("0.001"),
+    //   owner,
+    //   Math.round((Date.now() + 86400 * 2) / 1000),
+    //   { value: ethers.utils.parseEther("0.002") }
+    // );
 
     await router.addLiquidityETH(
       usdt.address,
       amountToAdd,
       0,
-      ethers.utils.parseEther("0.001"),
+      ethers.utils.parseEther("0.01"),
       owner,
       Math.round((Date.now() + 86400 * 2) / 1000),
-      { value: ethers.utils.parseEther("0.002") }
+      { value: ethers.utils.parseEther("0.05") }
     );
 
     await router.addLiquidityETH(
       usdc.address,
       amountToAdd,
       0,
-      ethers.utils.parseEther("0.001"),
+      ethers.utils.parseEther("0.01"),
       owner,
       Math.round((Date.now() + 86400 * 2) / 1000),
-      { value: ethers.utils.parseEther("0.002") }
+      { value: ethers.utils.parseEther("0.05") }
     );
 
     await router.addLiquidityETH(
       dao.address,
       amountToAdd,
       0,
-      ethers.utils.parseEther("0.001"),
+      ethers.utils.parseEther("0.01"),
       owner,
       Math.round((Date.now() + 86400 * 2) / 1000),
-      { value: ethers.utils.parseEther("0.002") }
+      { value: ethers.utils.parseEther("0.05") }
     );
   }
 
@@ -147,14 +137,14 @@ async function main() {
   await createPair();
   // await mintBalance();
   await deploySqnet();
-  console.log('USDT ADDRESS', usdt.address);
-  console.log('SQNK ADDRESS', sqnk.address);
-  console.log('DAO ADDRESS', dao.address);
-  console.log('USDC ADDRESS', usdc.address);
+  // console.log('USDT ADDRESS', usdt.address);
+  // console.log('SQNK ADDRESS', sqnk.address);
+  // console.log('DAO ADDRESS', dao.address);
+  // console.log('USDC ADDRESS', usdc.address);
   console.log('SQNET ADDRESS', sqnet.address);
-  console.log('ROUTER ADDRESS', router.address);
-  console.log('FACTORY ADDRESS', factory.address);
-  await addInitialLiquidities();
+  // console.log('ROUTER ADDRESS', router.address);
+  // console.log('FACTORY ADDRESS', factory.address);
+  // await addInitialLiquidities();
 
   // console.log('SQNK/USDT PAIR ADDRESS', pair.address);
 }

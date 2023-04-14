@@ -1,6 +1,7 @@
+// SPDX-License-Identifier: MIT
 pragma solidity =0.6.6;
 
-import "hardhat/console.sol";
+// import "hardhat/console.sol";
 import './interfaces/ISQNK.sol';
 import './periphery/interfaces/IWETH.sol';
 import './periphery/interfaces/IUniswapV2Router02.sol';
@@ -35,7 +36,7 @@ contract SQNET {
     _;
   }
 
-	function getLastClaim(address _address) public view returns(uint) {
+	function getLastClaim(address _address) external view returns(uint) {
 		return lastClaims[_address];
 	}
 
@@ -55,14 +56,14 @@ contract SQNET {
 		sqnkAddress = _address;
 	}
 
-	function getSplittedTaxes(uint amount) public view returns(uint marketingAmountSqnk, uint liquidityAmountSqnk) {
+	function getSplittedTaxes(uint amount) internal view returns(uint marketingAmountSqnk, uint liquidityAmountSqnk) {
 		ISQNK sqnk = ISQNK(sqnkAddress);
 		(,, uint liquidityTax) = sqnk.getTaxes();
 		liquidityAmountSqnk = amount * liquidityTax / 100;
 		marketingAmountSqnk = amount - liquidityAmountSqnk;
 	}
 
-	function countSqnkReward(address user) public returns(uint userReward) {
+	function countSqnkReward(address user) internal returns(uint userReward) {
 		ISQNK sqnk = ISQNK(sqnkAddress);
 		uint rewardSqnkBalance = sqnk.balanceOf(sqnk.rewardWallet());
 		uint rewardPercentage = (sqnk.balanceOf(user) * 100 * 1e18 / sqnk.totalSupply());

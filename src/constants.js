@@ -10,8 +10,8 @@ import usdc from "./assets/images/usdc.svg";
 import usdt from "./assets/images/usdt.svg";
 
 export const isTestnet = true;
-export const SQNK_ADDRESS = '0x2596454C4341e1c05d34cb298062d1aBb18B76Be';
-export const SQNET_ADDRESS = '0x5DBBb86b2729325D96d628E1E6A64BeFa0340E0F';
+export const SQNK_ADDRESS = '0xd6dBc0eb6D6830A227fA6d28386A9551c78d0d91';
+export const SQNET_ADDRESS = '0x2ACDCDF13F3944218c3e9050513060bB392e3693';
 
 const options = [
   {
@@ -103,7 +103,7 @@ const testnetOptions = [
     logo: null,
     percent: 50,
     symbol: "USDC",
-    address: '0x80c324364D98320eae65c6f2E68d58e0360a5aC7'
+    address: '0x089B4BF9fE065E58D2c61A736e1f8f34fC8eEfec'
   },
   {
     id: 2,
@@ -111,7 +111,7 @@ const testnetOptions = [
     logo: null,
     percent: 50,
     symbol: "USDT",
-    address: '0x9E1bA6DD8B2E2d84072820802093e46C24d7EB9d'
+    address: '0xe74ebA94EB1EE7A709ee2c030513C030b6cA771e'
   },
   {
     id: 3,
@@ -119,7 +119,7 @@ const testnetOptions = [
     logo: null,
     percent: 50,
     symbol: "DAO",
-    address: '0x97917Fc075f25E71ce177381b4d9Beb2a53e8DF6'
+    address: '0x284502da80D2fF9c6D347649B2d39B38f25Bf0A0'
   },
   {
     id: 4,
@@ -127,7 +127,7 @@ const testnetOptions = [
     logo: null,
     percent: 50,
     symbol: "ETH",
-    address: '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6'
+    address: '0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd'
   },
 ];
 

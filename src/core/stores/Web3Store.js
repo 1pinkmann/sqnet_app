@@ -56,11 +56,11 @@ export default class Web3Store {
   }
 
   async handleChain (chainId, testnet) {
-    if (chainId !== (testnet ? "0x5" : "0x1")) {
+    if (chainId !== (testnet ? "0x97" : "0x1")) {
       try {
         await window.ethereum.request({
           method: 'wallet_switchEthereumChain',
-          params: [{ chainId: (testnet ? "0x5" : "0x1") }],
+          params: [{ chainId: (testnet ? "0x97" : "0x1") }],
         });
       } catch (switchError) {
 
@@ -70,9 +70,9 @@ export default class Web3Store {
               method: 'wallet_addEthereumChain',
               params: [
                 {
-                  chainId: testnet ? "0x5" : "0x1",
-                  rpcUrl: testnet ? 'https://goerli.infura.io/v3/e95eeda83f4e45f0ba8f79adb530310f' : 'https://mainnet.infura.io/v3/',
-                  chainName: testnet ? "GoerliETH" : "Ethereum Mainnet"
+                  chainId: testnet ? "0x97" : "0x1",
+                  rpcUrl: testnet ? 'https://bsc-testnet.public.blastapi.io' : 'https://mainnet.infura.io/v3/',
+                  chainName: testnet ? "Binance Smart Chain Testnet" : "Ethereum Mainnet"
                 }
               ],
             });
