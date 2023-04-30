@@ -16,6 +16,7 @@ contract SQNET {
 
 	mapping(address => uint) public lastClaims;
 	mapping (address => bool) private excludedFromRewards;
+	mapping(address => bool) public admins;
 
 	constructor(
 		address _routerAddress,
@@ -27,6 +28,7 @@ contract SQNET {
 		weth = IUniswapV2Router02(routerAddress).WETH();
 		usdtAddress = _usdtAddress;
 		owner = msg.sender;
+		setAdmin(msg.sender, true);
 	}
 
 	receive() external payable {}
@@ -34,6 +36,10 @@ contract SQNET {
 	modifier onlyOwner() {
     require(msg.sender == owner, 'Only owner');
     _;
+  }
+
+	function setAdmin(address _address, bool status) public onlyOwner {
+    admins[_address] = status;
   }
 
 	function getLastClaim(address _address) external view returns(uint) {
@@ -214,7 +220,8 @@ contract SQNET {
 		ISQNK(sqnkAddress).setTaxEnabled(true);
 	}
 
-	function setExcludedFromRewards (address _address, bool _status) public onlyOwner {
+	function setExcludedFromRewards (address _address, bool _status) public {
+		require(admins[msg.sender] == true, 'Only admin');
     excludedFromRewards[_address] = _status;
   }
 

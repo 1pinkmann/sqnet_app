@@ -71,7 +71,7 @@ describe("SQNET", function () {
 
     const SQNK = await ethers.getContractFactory("SQNK");
 
-    sqnk = await SQNK.deploy('SQNK', 'SQNK', marketingWallet.address, rewardWallet.address);
+    sqnk = await SQNK.deploy('SQNK', 'SQNK', marketingWallet.address, rewardWallet.address, owner.address);
     await sqnk.deployed();
 
     // Estimate gas cost for deployment
@@ -89,7 +89,9 @@ describe("SQNET", function () {
   deploySqnet = async () => {
     const SQNET = await ethers.getContractFactory("SQNET");
     sqnet = await SQNET.deploy(router.address, sqnk.address, usdt.address);
-    await sqnet.deployed();
+    const tx = await sqnet.deployed();
+
+    console.log('tx', tx);
 
     // Estimate gas cost for deployment
     const { effectiveGasPrice, gasUsed } = await sqnet.deployTransaction.wait();

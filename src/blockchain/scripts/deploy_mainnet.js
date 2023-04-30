@@ -7,53 +7,38 @@
 const { ethers } = require("hardhat");
 const SQNKAbi = require("../artifacts/contracts/SQNK.sol/SQNK.json").abi;
 
-const PANCAKE_ROUTER = '0xEfF92A263d31888d860bD50809A8D171709b7b1c';
-const PANCAKE_FACTORY = '0x1097053Fd2ea711dad45caCcc45EfF7548fCB362';
-
 async function main() {
-  let factory;
   let sqnk;
-  let router;
-  let pairAddress;
   let sqnet;
-  let sqnetRouter;
-  const ONE_TOKEN = (10 ** 18).toString();
 
-  const owner = '0xf04410F48128CAe1409945720c1384335aa4f7e6';
-  const rewardWallet = '0xC9BfC6946cC4fa2bf99728521B77C91ab0CDc49F';
-  const marketingWallet = '0x343DaE1d573a9960600da5b3c892F936f209ADDD';
-
-  const getUsdt = async () => {
-    // usdt = await ethers.getContractAt(USDTAbi, USDT_ADDRESS);
-  }
+  const PANCAKE_ROUTER = '0xEfF92A263d31888d860bD50809A8D171709b7b1c';
+  const USDT_ADDRESS = '0xdAC17F958D2ee523a2206206994597C13D831ec7';
+  const OWNER_ADDRESS = '0xf04410F48128CAe1409945720c1384335aa4f7e6';
+  const REWARD_WALLET_ADDRESS = '0xC9BfC6946cC4fa2bf99728521B77C91ab0CDc49F';
+  const MARKETING_WALLET_ADDRESS = '0x343DaE1d573a9960600da5b3c892F936f209ADDD';
 
   const deploySqnk = async () => {
     const SQNK = await ethers.getContractFactory("SQNK");
-    sqnk = await SQNK.deploy('Squid Network', 'SQNK', marketingWallet, rewardWallet);
+    sqnk = await SQNK.deploy('Squid Network', 'SQNK', MARKETING_WALLET_ADDRESS, REWARD_WALLET_ADDRESS, OWNER_ADDRESS);
     await sqnk.deployed();
     console.log('SQNK ADDRESS', sqnk.address);
-    // await sqnk.transferOwnership(owner.address);
   }
 
-  // const getPair = async () => {
-    // const createTrx = await factory.createPair(sqnk.address, usdt.address);
-    // await createTrx.wait();
-    // pairAddress = await factory.getPair(sqnk.address, usdt.address);
-    // pair = await ethers.getContractAt(PairABI, pairAddress);
+  const getSQNK = async () => {
+    sqnk = await ethers.getContractAt(SQNKAbi, '0x61CAd8b63E45069Bb7f967fA87c9F39F05f5fdcA');
+  }
 
-    // console.log(await factory.pairCodeHash());
-  // }
+  const deploySqnet = async () => {
+    const SQNET = await ethers.getContractFactory("SQNET");
+    sqnet = await SQNET.deploy(PANCAKE_ROUTER, sqnk.address, USDT_ADDRESS);
+    await sqnet.deployed();
+    console.log('SQNET ADDRESS', sqnet.address);
+    await sqnk.setSqnetAddress(sqnet.address);
+  }
 
-  // const deploySqnet = async () => {
-  //   const SQNET = await ethers.getContractFactory("SQNET");
-  //   sqnet = await SQNET.deploy(router.address, sqnk.address, usdt.address, pairAddress);
-  //   await sqnet.deployed();
-
-  //   await sqnk.setSqnetAddress(sqnet.address);
-  // }
-
-  await deploySqnk();
-  // await deploySqnet();
+  // await deploySqnk();
+  await getSQNK();
+  await deploySqnet();
 }
 
 // We recommend this pattern to be able to use async/await everywhere

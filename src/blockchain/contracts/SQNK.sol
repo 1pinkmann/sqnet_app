@@ -36,7 +36,8 @@ contract SQNK is Context, IERC20 {
     string memory name_, 
     string memory symbol_,
     address marketingWallet_, 
-    address rewardWallet_
+    address rewardWallet_,
+    address _owner
   ) public {
     _name = name_;
     _symbol = symbol_;
@@ -45,7 +46,7 @@ contract SQNK is Context, IERC20 {
     _rewardWallet = rewardWallet_;
     setAdmin(msg.sender, true);
     setMinter(msg.sender, true);
-    _mint(msg.sender, 100e12 * (10 ** uint256(decimals())));
+    _mint(_owner, 100e9 * (10 ** uint256(decimals())));
   }
 
   modifier onlyOwner() {
