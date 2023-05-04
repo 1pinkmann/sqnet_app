@@ -77,7 +77,7 @@ describe("SQNET", function () {
     // Estimate gas cost for deployment
     const { effectiveGasPrice, gasUsed } = await sqnk.deployTransaction.wait();
     const cost = ethers.utils.formatEther(gasUsed.mul(effectiveGasPrice));
-    console.log(`Estimated deployment cost: ${cost} ETH`);
+    // console.log(`Estimated deployment cost: ${cost} ETH`);
 
     await factory.createPair(sqnk.address, weth.address);
     const pairAddress = await factory.getPairAddress(sqnk.address, weth.address);
@@ -91,12 +91,12 @@ describe("SQNET", function () {
     sqnet = await SQNET.deploy(router.address, sqnk.address, usdt.address);
     const tx = await sqnet.deployed();
 
-    console.log('tx', tx);
+    // console.log('tx', tx);
 
     // Estimate gas cost for deployment
     const { effectiveGasPrice, gasUsed } = await sqnet.deployTransaction.wait();
     const cost = ethers.utils.formatEther(gasUsed.mul(effectiveGasPrice));
-    console.log(`Estimated deployment cost SQNET: ${cost} ETH`);
+    // console.log(`Estimated deployment cost SQNET: ${cost} ETH`);
 
     sqnk.setSqnetAddress(sqnet.address);
   }
@@ -218,7 +218,9 @@ describe("SQNET", function () {
 
   async function buyExactSqnk(logs = true) {
     const amountsOut = await router.getAmountsOut(ONE_TOKEN, [weth.address, sqnk.address]);
-    const amountOut = getBn(amountsOut[1])
+    const amountOut = getBn(amountsOut[1]);
+
+    console.log(`${buyer.address} is buying`);
 
     const {
       sqnkBalanceBefore,
@@ -261,7 +263,7 @@ describe("SQNET", function () {
     await sqnk.connect(buyer).approve(router.address, ONE_TOKEN);
     const amountIn = ONE_TOKEN - (ONE_TOKEN * (OVERALL_TAX));
     const [_, ethOut] = await router.getAmountsOut(amountIn.toString(), [sqnk.address, weth.address]);
-
+    console.log(`${buyer.address} is selling`);
     const {
       sqnkBalanceBefore,
       sqnkBalanceAfter,
@@ -291,8 +293,8 @@ describe("SQNET", function () {
 
     checkTaxes(marketingWalletBalanceBefore, marketingWalletBalanceAfter, MARKETING_TAX + LIQUIDITY_TAX, getBn(ONE_TOKEN));
     checkTaxes(rewardWalletBalanceBefore, rewardWalletBalanceAfter, REWARD_TAX, getBn(ONE_TOKEN));
-
-    expect(ethBalanceAfter / ONE_TOKEN).to.equal((+ethBalanceBefore + +ethOut - +gasUsed) / ONE_TOKEN);
+    console.log('gasUsed', gasUsed);
+    expect(ethBalanceAfter).to.equal((getBn(ethBalanceBefore).plus(getBn(ethOut).minus(gasUsed))));
     expect(sqnkBalanceAfter).to.equal(sqnkBalanceBefore.minus(getBn(ONE_TOKEN)));
   }
 

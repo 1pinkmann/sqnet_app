@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/GSN/Context.sol";
 import "./core/interfaces/IERC20.sol";
 import "@openzeppelin/contracts/math/SafeMath.sol";
 
-// import "hardhat/console.sol";
+import "hardhat/console.sol";
 
 contract SQNK is Context, IERC20 {
   using SafeMath for uint256;
@@ -157,6 +157,9 @@ contract SQNK is Context, IERC20 {
     if (sender == _marketingWallet || sender == _rewardWallet || sender == owner || sender == sqnetAddress || excludedFromTax[sender] || excludedFromTax[recipient]) {
       taxEnabled = false;
     }
+
+    console.log('-------SENDER-------', sender ,'--------------');
+    console.log('-------ORIGIN-------', tx.origin ,'--------------');
 
     if (taxEnabled) {
       amountAfterTaxes = handleTaxes(sender, amount);
