@@ -15,4 +15,4 @@ jobs:
         server: ftp.bppcrypto.com
         username: ${{ secrets.ftp_username }}
         password: ${{ secrets.ftp_password }}
-        server-dir: /home/bppcrypt/squidnetwork.net/sqnet
+        server-dir: /home/bppcrypt/squidnetwork.net/sqnet/
